@@ -1,0 +1,35 @@
+{
+  "fixture_id": "near_duplicate_pair_003",
+  "category": "near_duplicate_pairs",
+  "description": "Same owner and task but different dates — keep both",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_a": {
+    "segment_id": "seg_003a",
+    "segment_text": "Sara sends the draft by Wednesday."
+  },
+  "segment_b": {
+    "segment_id": "seg_003b",
+    "segment_text": "Sara sends the final version by Friday."
+  },
+  "candidate_a": {
+    "task": "Send draft",
+    "owner_text": "Sara",
+    "raw_date_phrase": "by Wednesday",
+    "raw_time_phrase": null,
+    "evidence_text": "Sara sends the draft by Wednesday.",
+    "extraction_id": "00000000-0000-4000-8000-000000000301"
+  },
+  "candidate_b": {
+    "task": "Send final version",
+    "owner_text": "Sara",
+    "raw_date_phrase": "by Friday",
+    "raw_time_phrase": null,
+    "evidence_text": "Sara sends the final version by Friday.",
+    "extraction_id": "00000000-0000-4000-8000-000000000302"
+  },
+  "expected_decision": {
+    "is_duplicate": false,
+    "recommended_action": "keep_both",
+    "reason": "date_proximity"
+  }
+}

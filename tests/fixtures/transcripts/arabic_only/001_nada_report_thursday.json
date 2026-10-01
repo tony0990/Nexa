@@ -1,0 +1,18 @@
+{
+  "fixture_id": "arabic_only_001",
+  "category": "arabic_only",
+  "description": "Clear Arabic task with owner and relative weekday",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "ندى تسلّم التقرير يوم الخميس الجاي.",
+  "expected": {
+    "items": [
+      {
+        "task": "Deliver report",
+        "owner_text": "ندى",
+        "raw_date_phrase": "يوم الخميس الجاي",
+        "raw_time_phrase": null,
+        "evidence_text": "ندى تسلّم التقرير يوم الخميس الجاي."
+      }
+    ]
+  }
+}

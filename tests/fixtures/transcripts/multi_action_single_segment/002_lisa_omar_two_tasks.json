@@ -1,0 +1,25 @@
+{
+  "fixture_id": "multi_action_002",
+  "category": "multi_action_single_segment",
+  "description": "Two English actions with different owners",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "Lisa will update the docs by Wednesday, and Omar needs to deploy the patch before Friday.",
+  "expected": {
+    "items": [
+      {
+        "task": "Update docs",
+        "owner_text": "Lisa",
+        "raw_date_phrase": "by Wednesday",
+        "raw_time_phrase": null,
+        "evidence_text": "Lisa will update the docs by Wednesday"
+      },
+      {
+        "task": "Deploy patch",
+        "owner_text": "Omar",
+        "raw_date_phrase": "before Friday",
+        "raw_time_phrase": null,
+        "evidence_text": "Omar needs to deploy the patch before Friday"
+      }
+    ]
+  }
+}

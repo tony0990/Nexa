@@ -1,0 +1,18 @@
+{
+  "fixture_id": "mixed_codeswitch_001",
+  "category": "mixed_codeswitch",
+  "description": "Arabic owner + English relative deadline",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "أحمد يخلص الـbackend before Monday.",
+  "expected": {
+    "items": [
+      {
+        "task": "Finish backend",
+        "owner_text": "أحمد",
+        "raw_date_phrase": "before Monday",
+        "raw_time_phrase": null,
+        "evidence_text": "أحمد يخلص الـbackend before Monday."
+      }
+    ]
+  }
+}

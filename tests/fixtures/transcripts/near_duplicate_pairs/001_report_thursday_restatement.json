@@ -1,0 +1,35 @@
+{
+  "fixture_id": "near_duplicate_pair_001",
+  "category": "near_duplicate_pairs",
+  "description": "Same report deadline restated in different wording — expect merge recommendation",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_a": {
+    "segment_id": "seg_001a",
+    "segment_text": "التقرير يتسلم الخميس."
+  },
+  "segment_b": {
+    "segment_id": "seg_001b",
+    "segment_text": "متنسوش التقرير يوم الخميس."
+  },
+  "candidate_a": {
+    "task": "Submit report",
+    "owner_text": null,
+    "raw_date_phrase": "الخميس",
+    "raw_time_phrase": null,
+    "evidence_text": "التقرير يتسلم الخميس.",
+    "extraction_id": "00000000-0000-4000-8000-000000000101"
+  },
+  "candidate_b": {
+    "task": "Submit report",
+    "owner_text": null,
+    "raw_date_phrase": "يوم الخميس",
+    "raw_time_phrase": null,
+    "evidence_text": "متنسوش التقرير يوم الخميس.",
+    "extraction_id": "00000000-0000-4000-8000-000000000102"
+  },
+  "expected_decision": {
+    "is_duplicate": true,
+    "recommended_action": "merge",
+    "reason": "combined"
+  }
+}

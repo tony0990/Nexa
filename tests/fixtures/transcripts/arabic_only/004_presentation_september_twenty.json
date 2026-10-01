@@ -1,0 +1,18 @@
+{
+  "fixture_id": "arabic_only_004",
+  "category": "arabic_only",
+  "description": "Arabic fixed calendar date",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "الـpresentation تكون ready يوم عشرين سبتمبر.",
+  "expected": {
+    "items": [
+      {
+        "task": "Presentation ready",
+        "owner_text": null,
+        "raw_date_phrase": "يوم عشرين سبتمبر",
+        "raw_time_phrase": null,
+        "evidence_text": "الـpresentation تكون ready يوم عشرين سبتمبر."
+      }
+    ]
+  }
+}

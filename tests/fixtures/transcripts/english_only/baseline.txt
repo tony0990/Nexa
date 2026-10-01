@@ -1,0 +1,9 @@
+# English Only: Baseline English extraction
+- "John, send the report tomorrow at 10am"
+- "Sarah, prepare the meeting on Thursday"
+- "Mona, call the client today"
+- "Yassin, finish this task by EOD"
+- "Noor, send the email tomorrow"
+- "Khaled, prepare the files on Sunday"
+- "Layla, send the feedback tomorrow"
+- "Omar, finish the work today"

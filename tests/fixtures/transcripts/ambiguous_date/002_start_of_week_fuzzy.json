@@ -1,0 +1,20 @@
+{
+  "fixture_id": "ambiguous_date_002",
+  "category": "ambiguous_date",
+  "description": "Fuzzy range 'أول الأسبوع'",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "نبدأ الـ rollout أول الأسبوع.",
+  "expected": {
+    "items": [
+      {
+        "task": "Start rollout",
+        "owner_text": null,
+        "raw_date_phrase": "أول الأسبوع",
+        "raw_time_phrase": null,
+        "evidence_text": "نبدأ الـ rollout أول الأسبوع.",
+        "needs_review": true,
+        "review_reason": "fuzzy_range"
+      }
+    ]
+  }
+}

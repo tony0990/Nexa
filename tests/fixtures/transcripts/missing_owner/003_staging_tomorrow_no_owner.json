@@ -1,0 +1,20 @@
+{
+  "fixture_id": "missing_owner_003",
+  "category": "missing_owner",
+  "description": "Team-level task without individual owner",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "لازم نرفع الـ build على staging بكرة.",
+  "expected": {
+    "items": [
+      {
+        "task": "Deploy build to staging",
+        "owner_text": null,
+        "raw_date_phrase": "بكرة",
+        "raw_time_phrase": null,
+        "evidence_text": "لازم نرفع الـ build على staging بكرة.",
+        "needs_review": true,
+        "review_reason": "no_owner"
+      }
+    ]
+  }
+}

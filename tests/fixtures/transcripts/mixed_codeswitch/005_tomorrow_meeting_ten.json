@@ -1,0 +1,18 @@
+{
+  "fixture_id": "mixed_codeswitch_005",
+  "category": "mixed_codeswitch",
+  "description": "Arabic relative day + English meeting time",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "بكرة عندنا meeting الساعة ten.",
+  "expected": {
+    "items": [
+      {
+        "task": "Meeting",
+        "owner_text": null,
+        "raw_date_phrase": "بكرة",
+        "raw_time_phrase": "ten",
+        "evidence_text": "بكرة عندنا meeting الساعة ten."
+      }
+    ]
+  }
+}

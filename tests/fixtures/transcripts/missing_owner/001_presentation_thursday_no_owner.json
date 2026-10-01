@@ -1,0 +1,20 @@
+{
+  "fixture_id": "missing_owner_001",
+  "category": "missing_owner",
+  "description": "Explicit task and date, no owner stated",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "الـpresentation لازم تخلص الخميس.",
+  "expected": {
+    "items": [
+      {
+        "task": "Complete presentation",
+        "owner_text": null,
+        "raw_date_phrase": "الخميس",
+        "raw_time_phrase": null,
+        "evidence_text": "الـpresentation لازم تخلص الخميس.",
+        "needs_review": true,
+        "review_reason": "no_owner"
+      }
+    ]
+  }
+}

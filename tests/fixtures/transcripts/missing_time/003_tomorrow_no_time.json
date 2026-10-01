@@ -1,0 +1,18 @@
+{
+  "fixture_id": "missing_time_003",
+  "category": "missing_time",
+  "description": "Relative Arabic day without clock time",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "هنسلّم الـ prototype بكرة.",
+  "expected": {
+    "items": [
+      {
+        "task": "Deliver prototype",
+        "owner_text": null,
+        "raw_date_phrase": "بكرة",
+        "raw_time_phrase": null,
+        "evidence_text": "هنسلّم الـ prototype بكرة."
+      }
+    ]
+  }
+}

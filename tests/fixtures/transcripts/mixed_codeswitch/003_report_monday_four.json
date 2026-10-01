@@ -1,0 +1,18 @@
+{
+  "fixture_id": "mixed_codeswitch_003",
+  "category": "mixed_codeswitch",
+  "description": "English lead + Arabic weekday + spoken English time",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "The final report يتبعت يوم الاتنين الساعة four.",
+  "expected": {
+    "items": [
+      {
+        "task": "Send final report",
+        "owner_text": null,
+        "raw_date_phrase": "يوم الاتنين",
+        "raw_time_phrase": "four",
+        "evidence_text": "The final report يتبعت يوم الاتنين الساعة four."
+      }
+    ]
+  }
+}

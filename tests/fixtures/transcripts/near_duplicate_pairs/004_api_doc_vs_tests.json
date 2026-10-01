@@ -1,0 +1,35 @@
+{
+  "fixture_id": "near_duplicate_pair_004",
+  "category": "near_duplicate_pairs",
+  "description": "Lexically similar but different tasks — keep both",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_a": {
+    "segment_id": "seg_004a",
+    "segment_text": "Review the API documentation by Thursday."
+  },
+  "segment_b": {
+    "segment_id": "seg_004b",
+    "segment_text": "Review the API test results by Thursday."
+  },
+  "candidate_a": {
+    "task": "Review API documentation",
+    "owner_text": null,
+    "raw_date_phrase": "by Thursday",
+    "raw_time_phrase": null,
+    "evidence_text": "Review the API documentation by Thursday.",
+    "extraction_id": "00000000-0000-4000-8000-000000000401"
+  },
+  "candidate_b": {
+    "task": "Review API test results",
+    "owner_text": null,
+    "raw_date_phrase": "by Thursday",
+    "raw_time_phrase": null,
+    "evidence_text": "Review the API test results by Thursday.",
+    "extraction_id": "00000000-0000-4000-8000-000000000402"
+  },
+  "expected_decision": {
+    "is_duplicate": false,
+    "recommended_action": "keep_both",
+    "reason": "lexical"
+  }
+}

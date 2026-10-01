@@ -1,0 +1,10 @@
+{
+  "fixture_id": "zero_action_004",
+  "category": "zero_action",
+  "description": "Arabic vague planning language — 'محتاجين نفكر في' is not a commitment",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "محتاجين نفكر في موضوع الـ migration strategy.",
+  "expected": {
+    "items": []
+  }
+}

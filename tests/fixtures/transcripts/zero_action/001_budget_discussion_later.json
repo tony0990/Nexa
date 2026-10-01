@@ -1,0 +1,10 @@
+{
+  "fixture_id": "zero_action_001",
+  "category": "zero_action",
+  "description": "Future budget discussion with no deadline — must not extract",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "وبالنسبة للbudget هنتكلم فيها بعدين.",
+  "expected": {
+    "items": []
+  }
+}

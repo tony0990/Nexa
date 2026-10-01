@@ -1,0 +1,26 @@
+[project]
+name = "nexa-member3"
+version = "0.1.0"
+description = "NEXA Member 3 — AI extraction, Egyptian dates, duplicate detection"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --strict-markers"
+markers = [
+    "m0: Milestone 0 schema and fixture smoke tests",
+    "m1: Date rule engine tests (M1+)",
+    "m2: Extractor and LLM runtime tests (M2+)",
+    "m3: Confidence and ambiguity tests (M3+)",
+    "m4: Duplicate detection tests (M4+)",
+    "precision: Precision guardrail tests — release-blocking on zero_action fixtures",
+]

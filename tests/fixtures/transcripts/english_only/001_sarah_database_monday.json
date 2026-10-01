@@ -1,0 +1,18 @@
+{
+  "fixture_id": "english_only_001",
+  "category": "english_only",
+  "description": "Clear English task with owner and weekday",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "Sarah will finish the database integration by Monday.",
+  "expected": {
+    "items": [
+      {
+        "task": "Finish database integration",
+        "owner_text": "Sarah",
+        "raw_date_phrase": "by Monday",
+        "raw_time_phrase": null,
+        "evidence_text": "Sarah will finish the database integration by Monday."
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+# Mixed Code-switch: Highest Priority
+- "لازم نخلص الـ deployment before Friday"
+- "John, ابعت الـ report بكرة"
+- "سارة، check the emails يوم الخميس"
+- "نور، finish the presentation بكرة الصبح"
+- "خالد، prepare the slides يوم الحد"
+- "منى، send the feedback by Monday"
+- "ياسين، خلص الـ task before EOD"
+- "ليلى، update the status النهاردة"
+- "عمر، prepare the deck before Friday"
+- "أحمد، send the invite بكرة"
+- "سارة، finish the docs يوم الثلاثاء"
+- "نور، check the logs today"

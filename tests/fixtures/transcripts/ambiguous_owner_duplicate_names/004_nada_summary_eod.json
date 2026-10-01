@@ -1,0 +1,18 @@
+{
+  "fixture_id": "ambiguous_owner_004",
+  "category": "ambiguous_owner_duplicate_names",
+  "description": "Duplicate-name scenario — 'Nada' without last name",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "Nada sends the summary before EOD tomorrow.",
+  "expected": {
+    "items": [
+      {
+        "task": "Send summary",
+        "owner_text": "Nada",
+        "raw_date_phrase": "before EOD tomorrow",
+        "raw_time_phrase": null,
+        "evidence_text": "Nada sends the summary before EOD tomorrow."
+      }
+    ]
+  }
+}

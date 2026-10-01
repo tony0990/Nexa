@@ -1,0 +1,18 @@
+{
+  "fixture_id": "mixed_codeswitch_004",
+  "category": "mixed_codeswitch",
+  "description": "Arabic task + English weekday + Arabic time marker + English number",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "الـpresentation Thursday الساعة three.",
+  "expected": {
+    "items": [
+      {
+        "task": "Presentation ready",
+        "owner_text": null,
+        "raw_date_phrase": "Thursday",
+        "raw_time_phrase": "three",
+        "evidence_text": "الـpresentation Thursday الساعة three."
+      }
+    ]
+  }
+}

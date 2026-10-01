@@ -1,0 +1,10 @@
+{
+  "fixture_id": "zero_action_005",
+  "category": "zero_action",
+  "description": "Past-tense status update — not a future deadline",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "إحنا خلصنا الـ API testing الأسبوع اللي فات.",
+  "expected": {
+    "items": []
+  }
+}
