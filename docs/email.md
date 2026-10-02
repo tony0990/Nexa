@@ -161,12 +161,73 @@ database.
 asserts that shape contract, so a mismatch fails here rather than at
 integration time.
 
-## Still open
+## Connecting a Gmail account (team/admin setup)
 
-* **Gmail test account and OAuth client.** Section 24.4 lists both as team/admin
-  setup. Until they exist, the OAuth flow is exercised against a stub and only
-  the live `connect()` path is unverified. Drop the client secrets at
-  `%LOCALAPPDATA%\Nexa\gmail_client_secret.json`.
-* **`EmailService.is_connected()`** reports `True` for a `FakeEmailSender` so
-  Members 5 and 6 can walk the full preview → Send Now path offline. Wire a real
-  `GmailConnectionService` through the `connection=` argument in the app.
+Section 24.4 lists the Gmail test account and the Google OAuth client as
+**team/admin setup**, not a member's engineering task — nobody can write code
+that conjures a Google Cloud project. The code is done; this is the 10-minute
+manual part, and it has to be done once by whoever owns the Google account.
+
+1. **Gmail account.** Use a dedicated account (e.g. `nexa.reports@…`), not a
+   personal one. It is the address every report and reminder is sent *from*.
+2. **Google Cloud project.** <https://console.cloud.google.com> → create a
+   project.
+3. **Enable the Gmail API.** APIs & Services → Library → Gmail API → Enable.
+4. **OAuth consent screen.** External, app name `Nexa`, support email = the
+   account above. Add the single scope
+   `https://www.googleapis.com/auth/gmail.send`.
+   Leave the publishing status as **Testing** and add each team Gmail address
+   under *Test users*. Testing mode allows up to 100 test users and needs no
+   Google verification review — which matters, because requesting verification
+   for a `gmail.send` scope takes weeks and this app never leaves the team.
+   A token issued in Testing mode expires after 7 days, so expect to re-run
+   `connect` during development; publishing the app (still unverified, still
+   fine for an internal tool) removes that expiry.
+5. **Credentials.** Credentials → Create credentials → OAuth client ID →
+   application type **Desktop app**. Download the JSON.
+6. **Install it.** Save the downloaded file as
+   `%LOCALAPPDATA%\Nexa\gmail_client_secret.json`. It is gitignored; do not
+   commit it.
+7. **Connect and verify:**
+
+   ```bash
+   python scripts/setup_gmail.py status        # offline; says what is missing
+   python scripts/setup_gmail.py connect       # opens the browser once
+   python scripts/setup_gmail.py test          # refreshes; sends nothing
+   python scripts/setup_gmail.py send --to you@example.com
+   ```
+
+   `status` is safe to run any time and prints no secrets. The refresh token
+   goes straight into Windows Credential Manager under `Nexa.Gmail`.
+
+Why not an app password over SMTP, which would need none of the above? Section
+38 forbids storing a Gmail password, and an app password is one. The spec picks
+the Gmail API with OAuth2 for exactly that reason.
+
+### What is still unverified
+
+Everything except Google's own server. `oauth.py`'s flow — the
+`access_type=offline` / `prompt=consent` arguments that make Google return a
+refresh token at all, the port handling, the rejection of a response with no
+refresh token, the refresh-failure path — is covered by
+`tests/unit/member4/test_oauth_flow.py`, which fakes
+`google_auth_oauthlib.InstalledAppFlow` at the library boundary. Only the real
+round trip to accounts.google.com has no local test, and nothing can give it
+one.
+
+## Reporting the connection state
+
+`EmailService.is_connected()` backs the preview screen's `[ Send Now ]` button,
+so it asks in order:
+
+1. an explicitly wired `GmailConnectionService` (`connection=`) — authoritative;
+2. otherwise the sender itself: `GmailSender.is_connected()` checks its stored
+   credential offline, and `FakeEmailSender` is always connected, which is what
+   lets Members 5 and 6 walk the whole preview → Send Now path with no account;
+3. otherwise `False` — an unrecognized transport fails closed rather than
+   enabling a button that cannot work.
+
+None of these refresh a token or reach Google: painting a Settings screen must
+not make a network call. `GmailConnectionService.test()` is the online check,
+and it refreshes rather than sending a probe email, so opening Settings does not
+drop a stray message in the admin's Sent folder.

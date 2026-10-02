@@ -193,3 +193,65 @@ def test_missing_google_libraries_are_reported_clearly():
     """A build shipped without the Google libraries must explain itself."""
     assert EmailDependencyError("x").retryable is False
     assert "email_dependency" == EmailDependencyError("x").code
+
+
+# ------------------------------------------- what the Send button reports
+def test_fake_sender_reports_connected():
+    """Members 5 and 6 must be able to walk preview -> Send Now offline."""
+    from nexa.email import FakeEmailSender
+
+    assert FakeEmailSender().is_connected() is True
+
+
+def test_gmail_sender_without_a_credential_is_not_connected():
+    from nexa.email import GmailSender, StoredCredentials
+    from nexa.email.oauth import GmailOAuthFlow
+
+    sender = GmailSender(GmailOAuthFlow(CLIENT), StoredCredentials())
+    assert sender.is_connected() is False
+
+
+def test_gmail_sender_with_a_credential_is_connected():
+    from nexa.email import GmailSender
+    from nexa.email.oauth import GmailOAuthFlow
+
+    sender = GmailSender(GmailOAuthFlow(CLIENT), AUTHORIZED)
+    assert sender.is_connected() is True
+
+
+def test_gmail_sender_connection_check_is_offline():
+    """Painting the Send button must not refresh a token or reach Google."""
+    from nexa.email import GmailSender
+
+    flow = StubFlow(CLIENT)
+    sender = GmailSender(flow, AUTHORIZED)
+    assert sender.is_connected() is True
+    assert flow.refresh_calls == 0
+
+
+def test_email_service_delegates_to_a_wired_connection(token_store, monkeypatch):
+    from nexa.email import EmailService, FakeEmailSender, GmailConnectionService
+
+    monkeypatch.setattr(
+        "nexa.email.service.GmailOAuthFlow", lambda client, *a, **k: StubFlow(client)
+    )
+    connection = GmailConnectionService(token_store=token_store, client=CLIENT)
+    service = EmailService(sender=FakeEmailSender(), connection=connection)
+
+    # The fake sender says "connected", but an explicit connection service wins.
+    assert service.is_connected() is False
+    token_store.save(AUTHORIZED)
+    assert service.is_connected() is True
+
+
+def test_unknown_sender_fails_closed():
+    """A transport that answers neither must not enable a Send button."""
+    from nexa.email import EmailService
+
+    class MysterySender:
+        from_email = "x@example.com"
+
+        def send(self, message):
+            raise AssertionError("must not be called")
+
+    assert EmailService(sender=MysterySender()).is_connected() is False

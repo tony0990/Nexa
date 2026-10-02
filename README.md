@@ -71,6 +71,10 @@ python scripts/seed_demo_data.py --data-dir ./demo-data --reset
 python scripts/preview_emails.py        # writes sample emails to build/
 ```
 
+```bash
+python scripts/setup_gmail.py status    # offline; says what Gmail setup is missing
+```
+
 ```python
 from nexa.core.config import NexaConfig
 from nexa.data.database import open_database
@@ -173,6 +177,11 @@ writes SQL against another member's tables (Section 19).
 * **OAuth tokens live in Windows Credential Manager**, never in a config file,
   and never appear in a `repr`, a log line or an error message (Section 38).
   The only scope requested is `gmail.send`.
+* **Gmail needs a one-time admin setup** — a Google Cloud OAuth client and a
+  sending account (Section 24.4 calls this team/admin setup, not a member's
+  task). Steps and the Testing-mode gotchas are in
+  [docs/email.md](docs/email.md); `python scripts/setup_gmail.py status` reports
+  what is missing without sending anything.
 
 ## Documentation
 

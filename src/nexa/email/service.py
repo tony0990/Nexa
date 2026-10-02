@@ -317,14 +317,22 @@ class EmailService:
     def is_connected(self) -> bool:
         """Whether a send would have a usable account behind it.
 
-        Delegates to the `GmailConnectionService` when one was wired in. With
-        only a `FakeEmailSender` there is nothing to connect, and treating it as
-        connected is what lets Members 5 and 6 exercise the full preview →
-        `[ Send Now ]` path offline.
+        Asks, in order: an explicitly wired `GmailConnectionService`, then the
+        sender itself (`GmailSender` checks its stored credential;
+        `FakeEmailSender` is always connected, which is what lets Members 5 and
+        6 walk the full preview → `[ Send Now ]` path offline). A transport that
+        answers neither is treated as not connected, so an unknown sender fails
+        closed rather than enabling a Send button that cannot work.
         """
         if self.connection is not None:
             return self.connection.status().connected
-        return isinstance(self.sender, FakeEmailSender)
+        sender_check = getattr(self.sender, "is_connected", None)
+        if callable(sender_check):
+            try:
+                return bool(sender_check())
+            except EmailError:
+                return False
+        return False
 
     @property
     def delivery_kinds(self) -> tuple:

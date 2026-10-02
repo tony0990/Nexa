@@ -89,6 +89,15 @@ class GmailSender:
             return SendResult(ok=False, error_message=str(from_http_error(exc)))
         return SendResult(ok=True, gmail_message_id=(sent or {}).get("id"))
 
+    def is_connected(self) -> bool:
+        """True when a complete stored credential is behind this sender.
+
+        Offline and cheap on purpose: it is called to paint the preview screen's
+        `[ Send Now ]` button, so it must not refresh a token or reach Google.
+        `GmailConnectionService.test()` is the online check.
+        """
+        return self.stored is not None and self.stored.is_complete()
+
     def profile_email(self) -> Optional[str]:
         """The connected account's address, for the preview's "From" line."""
         try:
@@ -154,6 +163,10 @@ class FakeEmailSender:
         return SendResult(ok=True, gmail_message_id=gmail_message_id)
 
     # ------------------------------------------------------------ assertions
+    def is_connected(self) -> bool:
+        """Always connected: there is nothing to authorize against a fake."""
+        return True
+
     def profile_email(self) -> Optional[str]:
         return self.from_email
 
