@@ -1,0 +1,43 @@
+{# Plain-text fallback (Section 24.5). Rendered with autoescape OFF.
+
+   No fixed-width columns: an Arabic label and an English label have very
+   different widths, and a client using a proportional font would shear any
+   aligned table apart. Label-per-line survives both directions and every
+   client, which is the whole point of a fallback.
+#}
+NEXA — {{ title }}
+{{ '=' * 56 }}
+
+{{ greeting }}
+
+{{ intro }}
+
+{{ labels.meeting }}: {{ meeting_title }}
+{{ labels.date }}: {{ meeting_date }}
+
+{{ labels.action_items }}
+{{ '-' * 56 }}
+{% if rows %}
+{% for row in rows %}
+{{ row.number }}. {{ row.task }}
+   {{ labels.owner }}: {{ row.owner }}
+   {{ labels.deadline }}: {{ row.deadline }}
+   {{ labels.status }}: {{ row.status }}
+{% if row.needs_review %}
+   [{{ labels.needs_review }}] {{ row.review_note }}
+{% endif %}
+{% if show_evidence and row.evidence %}
+   {{ labels.evidence }}: {{ row.evidence }}
+{% endif %}
+
+{% endfor %}
+{% else %}
+{{ labels.no_actions }}
+
+{% endif %}
+{{ closing }}
+
+{{ signature }}
+
+{{ '-' * 56 }}
+{{ labels.generated_at }}: {{ generated_at }}

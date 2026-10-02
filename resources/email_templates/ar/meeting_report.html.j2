@@ -1,0 +1,12 @@
+{# Formal Arabic meeting report (Section 10.1).
+
+   The layout is shared because the context already carries every string
+   formatted in Arabic and `direction` is already "rtl"; only the font stack
+   genuinely differs. Override any block here to diverge from the shared
+   layout without touching the English report.
+#}
+{% extends "_shared/meeting_report.html.j2" %}
+{# Tahoma first: it has proper Arabic coverage and is present on Windows and
+   Office/Outlook. Without it a Latin-first stack falls back unpredictably and
+   Arabic renders with broken joining. #}
+{% block font_stack %}Tahoma,'Segoe UI',Arial,sans-serif{% endblock %}

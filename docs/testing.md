@@ -1,4 +1,7 @@
-# Testing — Member 1 subsystem
+# Testing
+
+Member 1's subsystem in detail, plus the Member 3 and Member 4 suites
+that run alongside it.
 
 ## Running
 
@@ -65,9 +68,29 @@ machine without `tzdata` falls back to a fixed offset. Install the project
 requirements (`pip install -r requirements/dev.txt`) to test against the real
 Cairo rules.
 
+## Member 3 and Member 4
+
+Those work packages live beside Member 1's and run in the same command:
+
+| Path | Covers |
+|---|---|
+| `tests/unit/member3/` | schemas, JSON repair, date rules, confidence, dedup, precision guardrail |
+| `tests/unit/member4/test_rendering.py` | languages, date/time formatting, owners, HTML/plain-text bodies, escaping |
+| `tests/unit/member4/test_mime_and_subjects.py` | RFC 2047 headers, part ordering, base64url, header injection, subject urgency |
+| `tests/unit/member4/test_personalization.py` | per-recipient task isolation, completed tasks, batching |
+| `tests/unit/member4/test_errors_and_oauth.py` | retryable/permanent split, token storage, secret redaction |
+| `tests/integration/member4/test_preview_and_send.py` | preview → send, partial failures, the Member 1 delivery seam |
+| `tests/integration/member4/test_connection.py` | Gmail connect/test/disconnect, revoked grants |
+
+Member 4's fixtures are `tests/fixtures/member4.py`, pinned to the same
+instant as Member 1's. Three Member 3 date/precision tests currently fail;
+see the README.
+
 ## Not covered here
 
-Audio, ASR, extraction, Gmail, the worker loop and the UI belong to Members
-2-6 and have their own suites. Member 1's subsystem is complete and testable
-without any of them: no test in this directory needs a microphone, a model
-file or a network connection.
+Audio and ASR (Member 2), the worker loop (Member 5) and the UI (Member 6)
+have their own suites. Everything merged so far is testable without any of
+them: no test in this repository needs a microphone, a model file, a Gmail
+account or a network connection. Member 4's Gmail transport is faked at the
+`EmailSender` protocol and the OAuth flow is stubbed, so the only unverified
+path is a live `connect()` against a real Google client.
