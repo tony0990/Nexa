@@ -18,3 +18,7 @@ venv/
 *.db
 *.db-wal
 *.db-shm
+
+# Generated at runtime, never committed.
+/chroma_db/
+/.coverage

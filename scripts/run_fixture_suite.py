@@ -3,11 +3,11 @@ import glob
 import json
 import time
 from datetime import datetime
-from dates.reference_time import CAIRO_TZ
-from intelligence.extractor import Extractor
-from intelligence.llm_runtime import LLMRuntime
-from intelligence.confidence import finalize_candidate
-from dates.normalizer import normalize_date_phrase
+from nexa.dates.reference_time import CAIRO_TZ
+from nexa.intelligence.extractor import Extractor
+from nexa.intelligence.llm_runtime import LLMRuntime
+from nexa.intelligence.confidence import finalize_candidate
+from nexa.dates.normalizer import normalize_date_phrase
 
 def run_suite():
     print("🚀 Starting Member 3 Fixture Suite...")

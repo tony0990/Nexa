@@ -1,8 +1,8 @@
 import time
 from datetime import datetime
-from dates.reference_time import CAIRO_TZ
-from intelligence.extractor import Extractor
-from intelligence.llm_runtime import LLMRuntime
+from nexa.dates.reference_time import CAIRO_TZ
+from nexa.intelligence.extractor import Extractor
+from nexa.intelligence.llm_runtime import LLMRuntime
 
 def benchmark():
     print("⏱️ Starting Extraction Benchmark...")
