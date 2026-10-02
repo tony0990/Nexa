@@ -97,20 +97,29 @@ class ReportRequest:
 
 
 def resolve_language(value: Optional[str]) -> str:
-    """Coerce any language input to a supported report language.
+    """Coerce any language input to one of the three modes in Section 24.1.
 
-    The project's final language decision (Section 1, "Language & Employee
-    Entry Rules") is that a report is Arabic **or** English — there is no
-    bilingual email mode, which is why `EmailLanguage` has exactly two
-    members. Anything unrecognized falls back to Arabic, the default in
+    Anything unrecognized falls back to Arabic, the default in
     `DEFAULT_SETTINGS`, rather than raising: a report must still render if a
-    stale setting row holds a language this build does not know.
+    stale settings row holds a language this build does not know.
     """
     text = str(getattr(value, "value", value) or "").strip().upper()
     if text in {"EN", "ENGLISH"}:
         return EmailLanguage.EN.value
+    if text in {"BILINGUAL", "BOTH", "AR+EN", "AR_EN"}:
+        return EmailLanguage.BILINGUAL.value
     return EmailLanguage.AR.value
 
 
 def is_rtl(language: str) -> bool:
+    """True when the email's base direction is right-to-left.
+
+    Bilingual is LTR: Section 10.3's layout leads with English, and the Arabic
+    half of each pair is marked `dir="auto"` so it still shapes correctly inside
+    an LTR document.
+    """
     return resolve_language(language) == EmailLanguage.AR.value
+
+
+def is_bilingual(language: Optional[str]) -> bool:
+    return resolve_language(language) == EmailLanguage.BILINGUAL.value

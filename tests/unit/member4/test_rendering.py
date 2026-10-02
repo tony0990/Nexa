@@ -29,8 +29,10 @@ from tests.fixtures import member4 as data
         (EmailLanguage.EN, "EN"),
         (None, "AR"),
         ("", "AR"),
+        ("BILINGUAL", "BILINGUAL"),
+        ("bilingual", "BILINGUAL"),
+        (EmailLanguage.BILINGUAL, "BILINGUAL"),
         # A stale settings row must not break a send; Arabic is the default.
-        ("BILINGUAL", "AR"),
         ("klingon", "AR"),
     ],
 )
@@ -38,18 +40,20 @@ def test_resolve_language(given, expected):
     assert resolve_language(given) == expected
 
 
-def test_only_two_languages_exist():
-    """Section 1's final decision: a report is Arabic or English, never both."""
-    assert {item.value for item in EmailLanguage} == {"AR", "EN"}
+def test_three_modes_exist():
+    """Section 24.1's "Three modes": ARABIC, ENGLISH, BILINGUAL."""
+    assert {item.value for item in EmailLanguage} == {"AR", "EN", "BILINGUAL"}
 
 
 def test_direction_follows_language():
     assert is_rtl("AR") is True
     assert is_rtl("EN") is False
+    # Section 10.3's layout leads with English, so bilingual is LTR.
+    assert is_rtl("BILINGUAL") is False
 
 
-def test_both_languages_have_templates(reports):
-    assert set(reports.available_languages()) == {"AR", "EN"}
+def test_every_mode_has_templates(reports):
+    assert set(reports.available_languages()) == {"AR", "EN", "BILINGUAL"}
 
 
 # ----------------------------------------------------------------- formatting

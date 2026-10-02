@@ -19,7 +19,7 @@ Full specification, architecture and team ownership: [NEXA.md](NEXA.md).
 | LLM runtime, action extraction, confidence | `src/nexa/intelligence/` | 3 | Done (2 date-rule tests failing — see below) |
 | Egyptian + English temporal normalization | `src/nexa/dates/` | 3 | Done |
 | Duplicate detection, embeddings, merge advice | `src/nexa/dedup/` | 3 | Done |
-| Report rendering, Arabic/English, subjects | `src/nexa/reports/` | 4 | Done |
+| Report rendering, Arabic/English/bilingual, subjects | `src/nexa/reports/` | 4 | Done |
 | Gmail OAuth, sending, preview, personalization | `src/nexa/email/` | 4 | Done |
 
 Audio/ASR (Member 2), scheduling and `NexaWorker.exe` (Member 5) and the
@@ -165,9 +165,16 @@ writes SQL against another member's tables (Section 19).
   who it skipped and why instead of dropping them silently.
 * **Deactivate, don't delete.** Inactive employees never receive email but
   stay attached to their history.
-* **A report is Arabic or English, never both.** Per Section 1's final language
-  decision, `EmailLanguage` has exactly two members and there is no bilingual
-  renderer.
+* **Three report languages: `AR`, `EN`, `BILINGUAL`** (Section 24.1's "Three
+  modes"). Bilingual pairs the *frame* — labels, dates, salutation, closing —
+  and shows names and task text once, untranslated. Note Section 1 states there
+  is no bilingual mode, contradicting Sections 10.3, 24.1, 24.2 and 24.6;
+  [docs/email.md](docs/email.md) records the conflict and how to drop the mode
+  if Section 1 wins.
+* **Migration 004 widens two CHECK constraints in place, not by rebuilding.**
+  Rebuilding either table cascade-deletes its children under the runner's
+  `foreign_keys = ON`. Measured, pinned down by a test, and explained in
+  [docs/email.md](docs/email.md).
 * **Email is offline-testable.** `FakeEmailSender` satisfies the same
   `EmailSender` protocol as `GmailSender` and still builds real MIME, so it
   rejects what Gmail would reject. Members 5 and 6 need no Google account.
@@ -185,6 +192,8 @@ writes SQL against another member's tables (Section 19).
 
 ## Documentation
 
+* [docs/architecture.md](docs/architecture.md) — how the merged subsystems fit
+  together and which parts are still missing
 * [docs/data-model.md](docs/data-model.md) — storage conventions and the
   decisions behind the schema
 * [docs/email.md](docs/email.md) — report rendering, Gmail delivery and the

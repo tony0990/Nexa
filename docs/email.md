@@ -31,18 +31,87 @@ reproduced byte-for-byte, including code-switching (Section 2.2). It is the one
 place colloquial speech appears verbatim in an otherwise formal email, which is
 why the templates show it in a quoted block.
 
-## Arabic or English, never both
+## Three modes, and a contradiction in the spec
 
-Section 1's final language decision kills the bilingual mode that Sections 10.3
-and 24.2 still mention. `EmailLanguage` therefore has exactly two members, there
-is no `BILINGUAL` renderer, and no `resources/email_templates/bilingual/`.
-`resolve_language()` maps anything unrecognized — including the string
-`"BILINGUAL"` from a stale settings row — to Arabic rather than raising, because
-a report must still render when a setting is stale.
+`EmailLanguage` has three members — `AR`, `EN`, `BILINGUAL` — matching Section
+24.1's "Three modes", Section 10.3's bilingual layout, Section 24.2's third
+template directory and Section 24.6's "bilingual report is professionally
+structured".
 
-Adding the mode back means: a third lexicon module, a third template directory,
-a third `EmailLanguage` member, and a decision about subject lines (a bilingual
-subject is roughly twice as long as what Gmail shows on a phone).
+This contradicts Section 1 ("Language & Employee Entry Rules — Final Decision"),
+which states that a report is Arabic **or** English and that there is no
+bilingual email mode. The three-mode reading is implemented because it is the
+one four separate sections agree on, including the owned-feature list and the
+definition of done. If Section 1 is meant to win, the removal is small and
+localised: delete `reports/bilingual.py`, the `bilingual/` template directory,
+the `BILINGUAL` enum member and migration 004.
+
+Note the spec names this mode inconsistently — §24.1 calls it `BILINGUAL`, while
+§10.3 and §24.2 render it as the phrase "Arabic or English", including as a
+filename (`Arabic or English.py`). That is a find-and-replace artifact: a Python
+module cannot have spaces in its name, so it could never have been imported. The
+module is `bilingual.py` and the template directory is `bilingual/`, which is
+what §24.1's own mode list calls it.
+
+### What bilingual pairs, and what it does not
+
+Paired: labels (`Meeting | الاجتماع`), dates (both forms), salutation, intro,
+closing, signature, status, and the "Unassigned" placeholder.
+
+**Not** paired: employee names and task text. §10.3 says not to mechanically
+translate names, and re-expressing an approved task in a second language would
+be inventing report content, which §24.1 forbids. So a bilingual report pairs the
+*frame* and shows the *data* once, exactly as approved.
+
+There is no third date engine: `ReportFormatter` composes the Arabic and English
+formatters and joins their output, so both halves are formatted from one local
+calendar day and cannot disagree about the weekday.
+
+Base direction is LTR because §10.3's layout leads with English; the Arabic half
+of each pair carries `dir="auto"` so it still shapes and aligns correctly inside
+an LTR document, and the paired paragraphs use `white-space: pre-line` because
+HTML otherwise collapses the blank line between them.
+
+Subjects are only partly paired. A fully paired subject runs to roughly twice
+what Gmail shows on a phone, so the report subject carries both titles and leaves
+the date to the body.
+
+### Migration 004: how not to widen a CHECK constraint
+
+Storing `BILINGUAL` needed a migration, because `001_initial.sql` constrains
+`meetings.email_language` and `email_deliveries.language` to `('AR','EN')`.
+Two things about it are worth knowing, because both were discovered by measuring
+rather than by reading:
+
+**The obvious implementation destroys data.** SQLite cannot `ALTER` a CHECK, so
+the standard fix is to rebuild the table — create, copy, `DROP`, rename. But the
+runner enables `PRAGMA foreign_keys = ON`, and under that `DROP TABLE` performs
+an implicit `DELETE FROM` which fires `ON DELETE CASCADE` on every child. A
+rebuild of `meetings` therefore deletes `meeting_participants`,
+`transcript_segments` and `action_items`. Measured against a seeded database: all
+three went from 1 row to 0. SQLite's own 12-step procedure says to set
+`foreign_keys = OFF` *before* the transaction, which a migration file cannot do
+because the runner wraps it in `BEGIN` and that pragma is a no-op inside one.
+`defer_foreign_keys` and `legacy_alter_table` were both tried; neither prevents
+the cascade. `test_bilingual_migration.py` pins this down so nobody
+"simplifies" 004 back into a rebuild.
+
+**So 004 edits the two CHECK clauses in place** via `writable_schema`. No row is
+read or written, no table dropped, every index and foreign key untouched —
+which makes it the smaller risk here despite `writable_schema`'s reputation.
+Because `replace()` is silent when its pattern misses, the migration verifies its
+own work through a guard table whose CHECK fails if the rewrite did not land,
+aborting and rolling back rather than recording a no-op as applied.
+
+**It also needed a reconnect.** SQLite caches a connection's parsed schema, and
+neither `PRAGMA writable_schema = RESET` nor ending the block invalidates it, so
+the connection that applied the migration kept enforcing the *old* constraint
+until the process restarted. On a first run that meant `open_database()`
+succeeded and the next insert failed. `Database.migrate()` now reconnects after
+applying anything.
+
+Both `migrations/` and `data/database.py` are Member 1's files (§21.2); the
+changes are annotated in place and flagged for review.
 
 ## Templates
 
@@ -50,7 +119,8 @@ subject is roughly twice as long as what Gmail shows on a phone).
 resources/email_templates/
 ├── _shared/      the actual layouts
 ├── ar/           {% extends %} + the Arabic font stack
-└── en/           {% extends %}
+├── en/           {% extends %}
+└── bilingual/    {% extends %} + the Arabic-capable font stack
 ```
 
 The per-language files Section 24.2 lists exist, but they are thin. The context

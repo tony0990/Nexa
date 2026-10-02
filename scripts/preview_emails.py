@@ -66,7 +66,7 @@ def main(argv=None) -> int:
     )
 
     written = []
-    for language in ("ar", "en"):
+    for language in ("ar", "en", "bilingual"):
         code = language.upper()
         meeting = data.meeting(code)
 
@@ -77,8 +77,8 @@ def main(argv=None) -> int:
         written.append(_write(out, f"report_{language}", report))
 
         reminder = service.reports.build_reminder(
-            data.AHMED if language == "ar" else data.SARAH,
-            data.ACTION_WITH_TIME if language == "ar" else data.ACTION_NO_TIME,
+            data.SARAH if language == "en" else data.AHMED,
+            data.ACTION_NO_TIME if language == "en" else data.ACTION_WITH_TIME,
             meeting,
             code,
         )

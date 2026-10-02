@@ -24,12 +24,19 @@ from ..contracts.meetings import ActionItem, EmailLanguage, Meeting, ReviewState
 from ..contracts.people import Employee
 from ..core.clock import Clock, SystemClock
 from ..core.timezone import DEFAULT_TIMEZONE, to_local
-from . import arabic, english
-from .models import MeetingReportContext, ReminderContext, ReportRow, resolve_language
+from . import arabic, bilingual, english
+from .models import (
+    MeetingReportContext,
+    ReminderContext,
+    ReportRow,
+    is_bilingual,
+    resolve_language,
+)
 
 _LEXICONS = {
     EmailLanguage.AR.value: arabic,
     EmailLanguage.EN.value: english,
+    EmailLanguage.BILINGUAL.value: bilingual,
 }
 
 
@@ -56,9 +63,27 @@ class ReportFormatter:
         self.lex = lexicon(self.language)
         self.clock = clock or SystemClock(tz_name)
         self.tz = tz_name
+        # Bilingual output is composed from the two single-language formatters
+        # rather than reimplementing a third set of date rules. `halves` is
+        # empty for AR and EN, so every method below has one code path.
+        self.halves: tuple = ()
+        if is_bilingual(self.language):
+            self.halves = (
+                ReportFormatter(EmailLanguage.EN.value, self.clock, tz_name),
+                ReportFormatter(EmailLanguage.AR.value, self.clock, tz_name),
+            )
+
+    def _paired(self, method: str, *args) -> Optional[str]:
+        """`English | Arabic` for a formatting method, or None if not bilingual."""
+        if not self.halves:
+            return None
+        return bilingual.pair(*(getattr(half, method)(*args) for half in self.halves))
 
     # ------------------------------------------------------------------ dates
     def format_date(self, value: Optional[date]) -> str:
+        paired = self._paired("format_date", value)
+        if paired is not None:
+            return paired
         if value is None:
             return self.lex.LABELS["date_not_specified"]
         weekday = self.lex.WEEKDAYS[value.weekday()]
@@ -69,6 +94,9 @@ class ReportFormatter:
 
     def format_time(self, value: Optional[time]) -> str:
         """12-hour clock. A missing time is "time not specified" (Section 2.1)."""
+        paired = self._paired("format_time", value)
+        if paired is not None:
+            return paired
         if value is None:
             return self.lex.LABELS["time_not_specified"]
         hour = value.hour % 12 or 12
@@ -76,6 +104,9 @@ class ReportFormatter:
         return f"{hour}:{value.minute:02d} {meridiem}"
 
     def format_datetime(self, value: Optional[datetime]) -> str:
+        paired = self._paired("format_datetime", value)
+        if paired is not None:
+            return paired
         if value is None:
             return self.lex.LABELS["date_not_specified"]
         local = to_local(value, self.tz)
@@ -93,6 +124,9 @@ class ReportFormatter:
 
     def format_deadline(self, action: ActionItem) -> str:
         """Full deadline text: day, plus time only when one was specified."""
+        paired = self._paired("format_deadline", action)
+        if paired is not None:
+            return paired
         day = self.local_due_date(action)
         if day is None:
             return self.lex.LABELS["date_not_specified"]

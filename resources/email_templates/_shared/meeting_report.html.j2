@@ -35,19 +35,19 @@
 </td></tr>
 
 <tr><td style="padding:20px 24px 4px;">
-<p style="margin:0 0 14px;font-size:15px;">{{ greeting }}</p>
-<p style="margin:0 0 18px;font-size:15px;line-height:1.8;">{{ intro }}</p>
+<p style="margin:0 0 14px;font-size:15px;white-space:pre-line;" dir="auto">{{ greeting }}</p>
+<p style="margin:0 0 18px;font-size:15px;line-height:1.8;white-space:pre-line;" dir="auto">{{ intro }}</p>
 </td></tr>
 
 <tr><td style="padding:0 24px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;" dir="{{ direction }}">
 <tr>
 <td style="padding:6px 0;color:#5a6270;width:104px;">{{ labels.meeting }}</td>
-<td style="padding:6px 0;font-weight:600;">{{ meeting_title }}</td>
+<td style="padding:6px 0;font-weight:600;" dir="auto">{{ meeting_title }}</td>
 </tr>
 <tr>
 <td style="padding:6px 0;color:#5a6270;">{{ labels.date }}</td>
-<td style="padding:6px 0;">{{ meeting_date }}</td>
+<td style="padding:6px 0;" dir="auto">{{ meeting_date }}</td>
 </tr>
 </table>
 </td></tr>
@@ -62,20 +62,20 @@
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px;border:1px solid #e3e5e9;border-radius:6px;{% if row.needs_review %}{{ 'border-right' if direction == 'rtl' else 'border-left' }}:4px solid #c8860d;{% endif %}" dir="{{ direction }}">
 <tr><td style="padding:12px 14px;">
 <div style="font-size:15px;font-weight:600;line-height:1.6;">
-<span style="color:#8a9099;">{{ row.number }}.</span> {{ row.task }}
+<span style="color:#8a9099;">{{ row.number }}.</span> <span dir="auto">{{ row.task }}</span>
 </div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;padding-top:8px;" dir="{{ direction }}">
 <tr>
 <td style="padding:3px 0;color:#5a6270;width:104px;">{{ labels.owner }}</td>
-<td style="padding:3px 0;">{{ row.owner }}</td>
+<td style="padding:3px 0;" dir="auto">{{ row.owner }}</td>
 </tr>
 <tr>
 <td style="padding:3px 0;color:#5a6270;">{{ labels.deadline }}</td>
-<td style="padding:3px 0;font-weight:600;">{{ row.deadline }}</td>
+<td style="padding:3px 0;font-weight:600;" dir="auto">{{ row.deadline }}</td>
 </tr>
 <tr>
 <td style="padding:3px 0;color:#5a6270;">{{ labels.status }}</td>
-<td style="padding:3px 0;">{{ row.status }}</td>
+<td style="padding:3px 0;" dir="auto">{{ row.status }}</td>
 </tr>
 </table>
 {% if row.needs_review %}
@@ -102,7 +102,7 @@
 {% endif %}
 
 <tr><td style="padding:12px 24px 20px;">
-<p style="margin:0 0 16px;font-size:14px;line-height:1.8;color:#3c424b;">{{ closing }}</p>
+<p style="margin:0 0 16px;font-size:14px;line-height:1.8;color:#3c424b;white-space:pre-line;" dir="auto">{{ closing }}</p>
 <div style="font-size:14px;line-height:1.8;white-space:pre-line;">{{ signature }}</div>
 </td></tr>
 

@@ -31,8 +31,22 @@ class ReviewState(str, Enum):
 
 
 class EmailLanguage(str, Enum):
+    """The language a report or reminder is rendered in (Sections 10, 24.1).
+
+    `BILINGUAL` is the third rendering mode in Section 24.1: one email carrying
+    paired `English | Arabic` labels and both date forms, per the Section 10.3
+    layout. It is a *rendering* mode, not a pair of sends.
+
+    Note that Section 1's "Language & Employee Entry Rules — Final Decision"
+    states there is no bilingual email mode, which contradicts Sections 10.3,
+    24.1, 24.2 and 24.6. The three-mode reading is implemented because it is
+    the one the owned-feature list, the owned file structure and the definition
+    of done all agree on. `docs/email.md` records the conflict.
+    """
+
     AR = "AR"
     EN = "EN"
+    BILINGUAL = "BILINGUAL"
 
 
 class AudioSource(str, Enum):

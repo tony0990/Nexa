@@ -76,11 +76,14 @@ Those work packages live beside Member 1's and run in the same command:
 |---|---|
 | `tests/unit/member3/` | schemas, JSON repair, date rules, confidence, dedup, precision guardrail |
 | `tests/unit/member4/test_rendering.py` | languages, date/time formatting, owners, HTML/plain-text bodies, escaping |
+| `tests/unit/member4/test_bilingual.py` | paired labels/dates, untranslated names and tasks, LTR layout, subjects |
+| `tests/unit/member4/test_oauth_flow.py` | the real OAuth flow against a faked `InstalledAppFlow` |
 | `tests/unit/member4/test_mime_and_subjects.py` | RFC 2047 headers, part ordering, base64url, header injection, subject urgency |
 | `tests/unit/member4/test_personalization.py` | per-recipient task isolation, completed tasks, batching |
 | `tests/unit/member4/test_errors_and_oauth.py` | retryable/permanent split, token storage, secret redaction |
 | `tests/integration/member4/test_preview_and_send.py` | preview → send, partial failures, the Member 1 delivery seam |
 | `tests/integration/member4/test_connection.py` | Gmail connect/test/disconnect, revoked grants |
+| `tests/integration/member4/test_bilingual_migration.py` | migration 004 is lossless, self-guarding, and does not rebuild tables |
 
 Member 4's fixtures are `tests/fixtures/member4.py`, pinned to the same
 instant as Member 1's. Three Member 3 date/precision tests currently fail;
