@@ -1,0 +1,18 @@
+{
+  "fixture_id": "missing_time_004",
+  "category": "missing_time",
+  "description": "EOD date phrase without separate time — EOD implies cutoff",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "Karim closes the tickets by end of day tomorrow.",
+  "expected": {
+    "items": [
+      {
+        "task": "Close tickets",
+        "owner_text": "Karim",
+        "raw_date_phrase": "by end of day tomorrow",
+        "raw_time_phrase": null,
+        "evidence_text": "Karim closes the tickets by end of day tomorrow."
+      }
+    ]
+  }
+}

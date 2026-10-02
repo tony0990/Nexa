@@ -1,0 +1,10 @@
+{
+  "fixture_id": "zero_action_002",
+  "category": "zero_action",
+  "description": "Presentation needs more work — observation, not a scheduled commitment",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "الـpresentation محتاجة شغل أكتر.",
+  "expected": {
+    "items": []
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "fixture_id": "missing_owner_002",
+  "category": "missing_owner",
+  "description": "English passive commitment without assignee",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "The migration must be completed by next Monday.",
+  "expected": {
+    "items": [
+      {
+        "task": "Complete migration",
+        "owner_text": null,
+        "raw_date_phrase": "by next Monday",
+        "raw_time_phrase": null,
+        "evidence_text": "The migration must be completed by next Monday.",
+        "needs_review": true,
+        "review_reason": "no_owner"
+      }
+    ]
+  }
+}

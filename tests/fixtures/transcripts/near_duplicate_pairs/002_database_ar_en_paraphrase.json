@@ -1,0 +1,35 @@
+{
+  "fixture_id": "near_duplicate_pair_002",
+  "category": "near_duplicate_pairs",
+  "description": "Arabic/English paraphrase of same database task",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_a": {
+    "segment_id": "seg_002a",
+    "segment_text": "أحمد يخلص الداتابيز قبل الاتنين."
+  },
+  "segment_b": {
+    "segment_id": "seg_002b",
+    "segment_text": "Ahmed needs to finish the database before Monday."
+  },
+  "candidate_a": {
+    "task": "Finish database",
+    "owner_text": "أحمد",
+    "raw_date_phrase": "قبل الاتنين",
+    "raw_time_phrase": null,
+    "evidence_text": "أحمد يخلص الداتابيز قبل الاتنين.",
+    "extraction_id": "00000000-0000-4000-8000-000000000201"
+  },
+  "candidate_b": {
+    "task": "Finish the database",
+    "owner_text": "Ahmed",
+    "raw_date_phrase": "before Monday",
+    "raw_time_phrase": null,
+    "evidence_text": "Ahmed needs to finish the database before Monday.",
+    "extraction_id": "00000000-0000-4000-8000-000000000202"
+  },
+  "expected_decision": {
+    "is_duplicate": true,
+    "recommended_action": "flag_for_review",
+    "reason": "semantic"
+  }
+}

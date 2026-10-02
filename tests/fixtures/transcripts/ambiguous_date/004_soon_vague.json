@@ -1,0 +1,25 @@
+{
+  "fixture_id": "ambiguous_date_004",
+  "category": "ambiguous_date",
+  "description": "Vague relative 'قريب' — should remain unresolved",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "هنطلع الـ hotfix قريب.",
+  "expected": {
+    "items": [
+      {
+        "task": "Release hotfix",
+        "owner_text": null,
+        "raw_date_phrase": "قريب",
+        "raw_time_phrase": null,
+        "evidence_text": "هنطلع الـ hotfix قريب.",
+        "needs_review": true,
+        "review_reason": "ambiguous_date"
+      }
+    ],
+    "resolved": {
+      "raw_date_phrase": "قريب",
+      "is_ambiguous": true,
+      "resolution_method": "unresolved"
+    }
+  }
+}

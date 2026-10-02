@@ -1,0 +1,18 @@
+{
+  "fixture_id": "missing_time_002",
+  "category": "missing_time",
+  "description": "English date-only with owner",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "Fatima will finalize the budget by September 15.",
+  "expected": {
+    "items": [
+      {
+        "task": "Finalize budget",
+        "owner_text": "Fatima",
+        "raw_date_phrase": "by September 15",
+        "raw_time_phrase": null,
+        "evidence_text": "Fatima will finalize the budget by September 15."
+      }
+    ]
+  }
+}

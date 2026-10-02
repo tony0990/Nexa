@@ -1,0 +1,25 @@
+{
+  "fixture_id": "multi_action_001",
+  "category": "multi_action_single_segment",
+  "description": "Two distinct commitments in one segment — acceptance meeting example",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "أحمد يخلص الـdatabase before Monday، والـpresentation تكون ready يوم الخميس الساعة three.",
+  "expected": {
+    "items": [
+      {
+        "task": "Finish database",
+        "owner_text": "أحمد",
+        "raw_date_phrase": "before Monday",
+        "raw_time_phrase": null,
+        "evidence_text": "أحمد يخلص الـdatabase before Monday"
+      },
+      {
+        "task": "Presentation ready",
+        "owner_text": null,
+        "raw_date_phrase": "يوم الخميس",
+        "raw_time_phrase": "three",
+        "evidence_text": "والـpresentation تكون ready يوم الخميس الساعة three"
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "fixture_id": "english_only_002",
+  "category": "english_only",
+  "description": "English relative date with explicit time",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "The demo is scheduled for next Thursday at 3 PM.",
+  "expected": {
+    "items": [
+      {
+        "task": "Demo scheduled",
+        "owner_text": null,
+        "raw_date_phrase": "next Thursday",
+        "raw_time_phrase": "3 PM",
+        "evidence_text": "The demo is scheduled for next Thursday at 3 PM."
+      }
+    ]
+  }
+}

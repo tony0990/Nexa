@@ -1,0 +1,25 @@
+{
+  "fixture_id": "multi_action_004",
+  "category": "multi_action_single_segment",
+  "description": "Mixed segment with two code-switched deadlines",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "Team A delivers the API by Tuesday, وفريق B يخلص الـ UI testing يوم الأربع.",
+  "expected": {
+    "items": [
+      {
+        "task": "Deliver API",
+        "owner_text": "Team A",
+        "raw_date_phrase": "by Tuesday",
+        "raw_time_phrase": null,
+        "evidence_text": "Team A delivers the API by Tuesday"
+      },
+      {
+        "task": "Complete UI testing",
+        "owner_text": "فريق B",
+        "raw_date_phrase": "يوم الأربع",
+        "raw_time_phrase": null,
+        "evidence_text": "فريق B يخلص الـ UI testing يوم الأربع"
+      }
+    ]
+  }
+}

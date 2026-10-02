@@ -1,0 +1,18 @@
+{
+  "fixture_id": "ambiguous_owner_002",
+  "category": "ambiguous_owner_duplicate_names",
+  "description": "English common name without surname",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "Ask Mohamed to review the contract by Thursday.",
+  "expected": {
+    "items": [
+      {
+        "task": "Review contract",
+        "owner_text": "Mohamed",
+        "raw_date_phrase": "by Thursday",
+        "raw_time_phrase": null,
+        "evidence_text": "Ask Mohamed to review the contract by Thursday."
+      }
+    ]
+  }
+}

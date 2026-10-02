@@ -1,0 +1,20 @@
+{
+  "fixture_id": "missing_owner_004",
+  "category": "missing_owner",
+  "description": "Report deadline with no named owner",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "Submit the audit report by Friday at noon.",
+  "expected": {
+    "items": [
+      {
+        "task": "Submit audit report",
+        "owner_text": null,
+        "raw_date_phrase": "by Friday",
+        "raw_time_phrase": "noon",
+        "evidence_text": "Submit the audit report by Friday at noon.",
+        "needs_review": true,
+        "review_reason": "no_owner"
+      }
+    ]
+  }
+}

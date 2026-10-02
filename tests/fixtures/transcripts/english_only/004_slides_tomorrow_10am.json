@@ -1,0 +1,18 @@
+{
+  "fixture_id": "english_only_004",
+  "category": "english_only",
+  "description": "English tomorrow with morning time",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "Please send the updated slides tomorrow at 10 AM.",
+  "expected": {
+    "items": [
+      {
+        "task": "Send updated slides",
+        "owner_text": null,
+        "raw_date_phrase": "tomorrow",
+        "raw_time_phrase": "10 AM",
+        "evidence_text": "Please send the updated slides tomorrow at 10 AM."
+      }
+    ]
+  }
+}

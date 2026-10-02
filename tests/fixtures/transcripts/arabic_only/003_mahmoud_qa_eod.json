@@ -1,0 +1,18 @@
+{
+  "fixture_id": "arabic_only_003",
+  "category": "arabic_only",
+  "description": "Arabic EOD-style deadline",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "محمود يراجع الـ QA قبل نهاية اليوم.",
+  "expected": {
+    "items": [
+      {
+        "task": "Review QA",
+        "owner_text": "محمود",
+        "raw_date_phrase": "قبل نهاية اليوم",
+        "raw_time_phrase": null,
+        "evidence_text": "محمود يراجع الـ QA قبل نهاية اليوم."
+      }
+    ]
+  }
+}

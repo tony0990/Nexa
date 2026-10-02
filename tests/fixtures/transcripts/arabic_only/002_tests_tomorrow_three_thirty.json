@@ -1,0 +1,18 @@
+{
+  "fixture_id": "arabic_only_002",
+  "category": "arabic_only",
+  "description": "Arabic deadline with fractional hour time",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "لازم نخلص الاختبارات بكرة الساعة تلاتة ونص.",
+  "expected": {
+    "items": [
+      {
+        "task": "Complete tests",
+        "owner_text": null,
+        "raw_date_phrase": "بكرة",
+        "raw_time_phrase": "تلاتة ونص",
+        "evidence_text": "لازم نخلص الاختبارات بكرة الساعة تلاتة ونص."
+      }
+    ]
+  }
+}

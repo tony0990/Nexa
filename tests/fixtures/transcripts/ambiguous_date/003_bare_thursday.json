@@ -1,0 +1,20 @@
+{
+  "fixture_id": "ambiguous_date_003",
+  "category": "ambiguous_date",
+  "description": "Bare weekday 'الخميس' without this/next qualifier",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "نسلّم النسخة النهائية يوم الخميس.",
+  "expected": {
+    "items": [
+      {
+        "task": "Deliver final version",
+        "owner_text": null,
+        "raw_date_phrase": "يوم الخميس",
+        "raw_time_phrase": null,
+        "evidence_text": "نسلّم النسخة النهائية يوم الخميس.",
+        "needs_review": true,
+        "review_reason": "ambiguous_date"
+      }
+    ]
+  }
+}

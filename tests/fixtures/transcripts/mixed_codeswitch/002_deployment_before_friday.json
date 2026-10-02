@@ -1,0 +1,18 @@
+{
+  "fixture_id": "mixed_codeswitch_002",
+  "category": "mixed_codeswitch",
+  "description": "Arabic imperative + English weekday deadline",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "لازم نخلص الـ deployment before Friday.",
+  "expected": {
+    "items": [
+      {
+        "task": "Complete deployment",
+        "owner_text": null,
+        "raw_date_phrase": "before Friday",
+        "raw_time_phrase": null,
+        "evidence_text": "لازم نخلص الـ deployment before Friday."
+      }
+    ]
+  }
+}

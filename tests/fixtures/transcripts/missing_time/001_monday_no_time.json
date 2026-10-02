@@ -1,0 +1,19 @@
+{
+  "fixture_id": "missing_time_001",
+  "category": "missing_time",
+  "description": "Date-only deadline — time not stated, extraction still valid",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "أحمد يسلّم الـ database backup يوم الاتنين.",
+  "expected": {
+    "items": [
+      {
+        "task": "Deliver database backup",
+        "owner_text": "أحمد",
+        "raw_date_phrase": "يوم الاتنين",
+        "raw_time_phrase": null,
+        "evidence_text": "أحمد يسلّم الـ database backup يوم الاتنين."
+      }
+    ],
+    "notes": "Date-only deadlines typically do not force needs_review for missing time alone"
+  }
+}

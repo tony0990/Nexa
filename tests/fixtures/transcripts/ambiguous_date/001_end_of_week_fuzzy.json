@@ -1,0 +1,25 @@
+{
+  "fixture_id": "ambiguous_date_001",
+  "category": "ambiguous_date",
+  "description": "Fuzzy range 'آخر الأسبوع' — must flag fuzzy_range after resolution",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "التقرير لازم يتسلم آخر الأسبوع.",
+  "expected": {
+    "items": [
+      {
+        "task": "Submit report",
+        "owner_text": null,
+        "raw_date_phrase": "آخر الأسبوع",
+        "raw_time_phrase": null,
+        "evidence_text": "التقرير لازم يتسلم آخر الأسبوع.",
+        "needs_review": true,
+        "review_reason": "fuzzy_range"
+      }
+    ],
+    "resolved": {
+      "raw_date_phrase": "آخر الأسبوع",
+      "is_ambiguous": true,
+      "resolution_method": "deterministic_rule"
+    }
+  }
+}

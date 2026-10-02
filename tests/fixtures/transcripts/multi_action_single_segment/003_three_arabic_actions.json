@@ -1,0 +1,32 @@
+{
+  "fixture_id": "multi_action_003",
+  "category": "multi_action_single_segment",
+  "description": "Three Arabic actions in one long segment",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "سارة تبعت الـ minutes النهاردة، كريم يجهّز الـ slides بكرة، ومنى تراجع الـ budget يوم الأحد.",
+  "expected": {
+    "items": [
+      {
+        "task": "Send minutes",
+        "owner_text": "سارة",
+        "raw_date_phrase": "النهاردة",
+        "raw_time_phrase": null,
+        "evidence_text": "سارة تبعت الـ minutes النهاردة"
+      },
+      {
+        "task": "Prepare slides",
+        "owner_text": "كريم",
+        "raw_date_phrase": "بكرة",
+        "raw_time_phrase": null,
+        "evidence_text": "كريم يجهّز الـ slides بكرة"
+      },
+      {
+        "task": "Review budget",
+        "owner_text": "منى",
+        "raw_date_phrase": "يوم الأحد",
+        "raw_time_phrase": null,
+        "evidence_text": "منى تراجع الـ budget يوم الأحد"
+      }
+    ]
+  }
+}

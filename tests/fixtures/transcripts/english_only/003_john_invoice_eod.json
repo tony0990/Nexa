@@ -1,0 +1,18 @@
+{
+  "fixture_id": "english_only_003",
+  "category": "english_only",
+  "description": "English EOD deadline with owner",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "John must submit the invoice by EOD.",
+  "expected": {
+    "items": [
+      {
+        "task": "Submit invoice",
+        "owner_text": "John",
+        "raw_date_phrase": "by EOD",
+        "raw_time_phrase": null,
+        "evidence_text": "John must submit the invoice by EOD."
+      }
+    ]
+  }
+}

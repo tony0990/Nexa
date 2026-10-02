@@ -1,0 +1,18 @@
+{
+  "fixture_id": "ambiguous_owner_003",
+  "category": "ambiguous_owner_duplicate_names",
+  "description": "Arabic first name only in imperative",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "ياسمين تتابع مع الـ vendor يوم الأربع.",
+  "expected": {
+    "items": [
+      {
+        "task": "Follow up with vendor",
+        "owner_text": "ياسمين",
+        "raw_date_phrase": "يوم الأربع",
+        "raw_time_phrase": null,
+        "evidence_text": "ياسمين تتابع مع الـ vendor يوم الأربع."
+      }
+    ]
+  }
+}

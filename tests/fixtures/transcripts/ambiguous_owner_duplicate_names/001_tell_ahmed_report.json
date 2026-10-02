@@ -1,0 +1,19 @@
+{
+  "fixture_id": "ambiguous_owner_001",
+  "category": "ambiguous_owner_duplicate_names",
+  "description": "Common name 'أحمد' — extract raw text only, no identity resolution",
+  "reference_datetime": "2026-09-04T14:30:00+03:00",
+  "segment_text": "قول لأحمد يخلص الـ report قبل يوم الاتنين.",
+  "expected": {
+    "items": [
+      {
+        "task": "Finish report",
+        "owner_text": "أحمد",
+        "raw_date_phrase": "قبل يوم الاتنين",
+        "raw_time_phrase": null,
+        "evidence_text": "قول لأحمد يخلص الـ report قبل يوم الاتنين."
+      }
+    ],
+    "notes": "Two Ahmeds may exist in org — Member 1/admin disambiguates, not extractor"
+  }
+}
