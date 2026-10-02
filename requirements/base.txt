@@ -1,0 +1,8 @@
+# Member 1 (core data, people, search, audit) has no third-party runtime
+# dependency beyond the IANA timezone database: the platform runs on the
+# standard library (sqlite3, zoneinfo, dataclasses).
+#
+# tzdata is required on Windows, which ships no IANA database. Without it
+# Africa/Cairo silently falls back to a fixed +02:00 offset and every reminder
+# computed during Egyptian summer time would be an hour late.
+tzdata>=2024.1

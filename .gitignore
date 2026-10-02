@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Leading slashes matter: unanchored "data/" would also ignore the
+# src/nexa/data package, and "models/" any nested models package.
+/build/
+/dist/
+/data/
+/demo-data/
+/backups/
+/logs/
+/models/
+
+*.db
+*.db-wal
+*.db-shm
