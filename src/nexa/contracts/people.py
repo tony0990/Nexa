@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, Protocol, Sequence
+from typing import Optional, Protocol, Sequence, runtime_checkable
 
 
 @dataclass(frozen=True)
@@ -34,6 +34,7 @@ class Role:
     updated_at: Optional[datetime] = None
 
 
+@runtime_checkable
 class PeopleService(Protocol):
     def create_employee(self, employee: Employee) -> Employee: ...
 
@@ -50,6 +51,7 @@ class PeopleService(Protocol):
     def role_members(self, role_id: int) -> Sequence[Employee]: ...
 
 
+@runtime_checkable
 class EmployeeRepository(Protocol):
     def get(self, employee_id: int) -> Optional[Employee]: ...
 

@@ -3,7 +3,7 @@
 Smart Meeting Voice AI & Reminder desktop application for Windows.
 Full specification, architecture and team ownership: [NEXA.md](NEXA.md).
 
-`main` holds the merged work of **Members 1, 3, 4 and 5**, plus the shared
+`main` holds the merged work of **Members 1, 2, 3, 4 and 5**, plus the shared
 `contracts` package from the Section 17 kickoff.
 
 ## What is implemented here
@@ -16,6 +16,8 @@ Full specification, architecture and team ownership: [NEXA.md](NEXA.md).
 | Employees, roles, recipient resolution | `src/nexa/people/` | 1 | Done |
 | Search, filters, global search | `src/nexa/search/` | 1 | Done |
 | Append-only audit trail | `src/nexa/audit/` | 1 | Done |
+| Audio devices, recording, chunking, mixing, VAD | `src/nexa/audio/` | 2 | Done (real Windows capture unverified) |
+| faster-whisper engine, ASR service, benchmark harness | `src/nexa/asr/` | 2 | Done (no model downloaded yet) |
 | LLM runtime, action extraction, confidence | `src/nexa/intelligence/` | 3 | Done |
 | Egyptian + English temporal normalization | `src/nexa/dates/` | 3 | Done |
 | Duplicate detection, embeddings, merge advice | `src/nexa/dedup/` | 3 | Done |
@@ -25,7 +27,10 @@ Full specification, architecture and team ownership: [NEXA.md](NEXA.md).
 | `NexaWorker.exe` loop, claiming, retry, health | `src/nexa/worker/` | 5 | Done |
 | Worker entry point | `apps/nexa_worker.py` | 5 | Done |
 
-Audio/ASR (Member 2) and the desktop UI (Member 6) are not merged yet.
+Only the desktop UI (Member 6) is not merged yet. See
+[docs/remaining-work.md](docs/remaining-work.md) for what is still outstanding
+across the whole project, including the parts that need hardware or a human
+rather than code.
 
 ## Requirements
 
@@ -60,6 +65,10 @@ python scripts/preview_emails.py        # writes sample emails to build/
 
 ```bash
 python scripts/setup_gmail.py status    # offline; says what Gmail setup is missing
+```
+
+```bash
+python scripts/download_models.py --list   # ASR/LLM weights, none needed to test
 ```
 
 ```bash
@@ -118,6 +127,14 @@ SearchService.global_search(query)
 
 AuditService.record(event)
 AuditService.history(entity_type, entity_id)
+```
+
+Member 3 (Section 23.3):
+
+```python
+ExtractionService.extract(transcript, reference_datetime)   # -> [ActionCandidate]
+DuplicateService.compare(candidate, existing)               # recommends only
+DuplicateService.merge(left, right)                         # after the admin confirms
 ```
 
 Member 4 (Section 24.3):
@@ -193,6 +210,8 @@ writes SQL against another member's tables (Section 19).
   fixed bugs and the matching rules they imply
 * [docs/integration.md](docs/integration.md) — what broke when the work packages
   were actually joined, and the contract rules that follow from it
+* [docs/remaining-work.md](docs/remaining-work.md) — what is still missing, by
+  owner, and which parts code cannot finish
 * [docs/data-model.md](docs/data-model.md) — storage conventions and the
   decisions behind the schema
 * [docs/email.md](docs/email.md) — report rendering, Gmail delivery and the

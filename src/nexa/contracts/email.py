@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Protocol, Sequence
+from typing import Optional, Protocol, Sequence, runtime_checkable
 
 
 class DeliveryKind(str, Enum):
@@ -90,9 +90,11 @@ class SendResult:
     retryable: bool = True
 
 
+@runtime_checkable
 class RecipientResolver(Protocol):
     def resolve(self, targets: Sequence[DeliveryTarget]) -> Sequence[object]: ...
 
 
+@runtime_checkable
 class EmailSender(Protocol):
     def send(self, message: RenderedEmail) -> SendResult: ...

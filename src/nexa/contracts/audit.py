@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Protocol, Sequence
+from typing import Optional, Protocol, Sequence, runtime_checkable
 
 
 class ActorType(str, Enum):
@@ -28,6 +28,7 @@ class AuditEvent:
     created_at: Optional[datetime] = None
 
 
+@runtime_checkable
 class AuditService(Protocol):
     def record(self, event: AuditEvent) -> AuditEvent: ...
 

@@ -55,7 +55,9 @@ at all.
 | `src/nexa/people/` | 1 | Employees, roles, recipient resolution |
 | `src/nexa/search/` | 1 | Employee/meeting/task search, filters, global search |
 | `src/nexa/audit/` | 1 | Append-only audit trail |
-| `src/nexa/intelligence/` | 3 | LLM runtime, extraction, confidence, JSON repair |
+| `src/nexa/audio/` | 2 | Device listing, mic/loopback/combined capture, chunking, mixing, VAD |
+| `src/nexa/asr/` | 2 | faster-whisper engine, model registry, benchmark harness, metrics |
+| `src/nexa/intelligence/` | 3 | LLM runtime, extraction, confidence, JSON repair, `ExtractionService` |
 | `src/nexa/dates/` | 3 | Egyptian and English temporal normalization |
 | `src/nexa/dedup/` | 3 | Embeddings, similarity, duplicate detection |
 | `src/nexa/reports/` | 4 | Report rendering in AR / EN / BILINGUAL |
@@ -68,7 +70,6 @@ at all.
 
 | Expected by Section 18 | Owner |
 |---|---|
-| `src/nexa/audio/`, `src/nexa/asr/` | 2 |
 | `src/nexa/ui/`, `src/nexa/i18n/`, `src/nexa/themes/` | 6 |
 | `apps/nexa_desktop.py` | 6 |
 | `resources/translations/`, `resources/icons/`, `resources/themes/` | 6 |
@@ -80,7 +81,8 @@ at all.
 
 Nobody has stubbed these out on purpose: an empty package created by the wrong
 member is a merge conflict waiting to happen, and Section 19 rule 7 puts each
-directory behind one owner.
+directory behind one owner. [remaining-work.md](remaining-work.md) is the full
+audit, including the parts that need hardware or a human rather than code.
 
 ## The contracts package
 
@@ -139,6 +141,10 @@ All annotated in the code and flagged for their owner:
 5. `src/nexa/scheduling/` and `src/nexa/worker/` — Member 5's packages were
    relocated out of a nested `Nexa/` directory and adapted to the canonical
    contracts. Their private copy of `contracts/` was deleted.
+
+`src/nexa/contracts/` — every service protocol is now `@runtime_checkable`.
+Member 2 marked theirs; the other eight were not, so an `isinstance` check
+against them raised `TypeError`. Additive and uniform.
 
 Member 3's packages were relocated from the repository root into `src/nexa/`
 to match Section 18, with their imports rewritten and no logic changed. Three

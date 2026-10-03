@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from nexa.intelligence.schemas import ActionCandidate, DuplicateDecision
 from nexa.dedup.similarity import lexical_similarity, normalize_text
 from nexa.dedup.embeddings import EmbeddingModel
+from nexa.dedup.merge import merge as merge_candidates
 
 class DuplicateService:
     """
@@ -92,3 +93,13 @@ class DuplicateService:
             ))
 
         return decisions
+
+    @staticmethod
+    def merge(left: ActionCandidate, right: ActionCandidate) -> ActionCandidate:
+        """Section 23.3's `DuplicateService.merge`.
+
+        Only ever called after the admin presses `[ Merge ]` (§7): `compare`
+        recommends, a human decides, and this performs it. Additive — see
+        `nexa.dedup.merge` for why nothing is discarded.
+        """
+        return merge_candidates(left, right)

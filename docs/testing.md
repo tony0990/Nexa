@@ -86,6 +86,11 @@ Those work packages live beside Member 1's and run in the same command:
 | `tests/integration/member4/test_preview_and_send.py` | preview → send, partial failures, the Member 1 delivery seam |
 | `tests/integration/member4/test_connection.py` | Gmail connect/test/disconnect, revoked grants |
 | `tests/integration/member4/test_bilingual_migration.py` | migration 004 is lossless, self-guarding, and does not rebuild tables |
+| `tests/unit/member2/` | audio utils, recorder, chunking, VAD, ASR service, benchmark metrics |
+| `tests/unit/member3/test_english_dates.py` | English deadlines resolve forward; `next <weekday>` resolves at all |
+| `tests/unit/member3/test_merge.py` | duplicate merging keeps both evidence sentences and never raises confidence |
+| `tests/unit/test_scripts.py` | every script in §18 imports and runs |
+| `tests/integration/test_transcript_to_actions.py` | the Member 2 → Member 3 seam: a Transcript becomes action candidates |
 | `tests/unit/member5/` | reminder rules, queue transitions, retry and recovery policy |
 | `tests/integration/member5/` | the Section 25.5 stress tests: 100 same-second reminders, restart mid-batch, offline recovery, snooze, completion |
 | `tests/integration/test_cross_member.py` | the real seams — Member 4's renderer and Member 1's resolver inside Member 5's worker, with no fakes but the Gmail transport |

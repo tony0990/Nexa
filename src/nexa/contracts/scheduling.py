@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, time
 from enum import Enum
-from typing import Optional, Protocol, Sequence
+from typing import Optional, Protocol, Sequence, runtime_checkable
 
 
 class ReminderStatus(str, Enum):
@@ -53,6 +53,7 @@ class Reminder:
     updated_at: Optional[datetime] = None
 
 
+@runtime_checkable
 class ReminderQueue(Protocol):
     def enqueue_for_action(self, action: object) -> Sequence[Reminder]: ...
 

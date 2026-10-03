@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime, time
 from enum import Enum
-from typing import Optional, Protocol, Sequence
+from typing import Optional, Protocol, Sequence, runtime_checkable
 
 
 class MeetingStatus(str, Enum):
@@ -124,6 +124,7 @@ class MeetingTemplate:
     updated_at: Optional[datetime] = None
 
 
+@runtime_checkable
 class MeetingRepository(Protocol):
     def create(self, meeting: Meeting) -> Meeting: ...
 

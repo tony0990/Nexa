@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date, datetime, time
-from typing import Optional, Protocol, Sequence
+from typing import Optional, Protocol, Sequence, runtime_checkable
 
 from .transcription import Transcript
 
@@ -23,6 +23,7 @@ class ActionCandidate:
     duplicate_of: Optional[int] = None
 
 
+@runtime_checkable
 class ExtractionService(Protocol):
     def extract(
         self, transcript: Transcript, reference_datetime: datetime

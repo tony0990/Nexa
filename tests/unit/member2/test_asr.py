@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -30,7 +31,11 @@ class ScriptedEngine:
 
     def transcribe(self, audio_path: str):
         self.calls += 1
-        text = self._answers[audio_path.rsplit("/", 1)[-1].removesuffix(".wav")]
+        # Path.stem, not rsplit("/"): tmp_path hands out backslash-separated
+        # paths on Windows, so the forward-slash split returned the whole path
+        # and every lookup raised KeyError — in a Windows-only project. The
+        # production code in benchmark.py already uses .stem.
+        text = self._answers[Path(audio_path).stem]
         return build_transcript([(0.0, 1.0, text)], model_name=self.name, duration_ms=1000)
 
 
