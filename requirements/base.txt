@@ -1,8 +1,21 @@
-# Member 1 (core data, people, search, audit) has no third-party runtime
-# dependency beyond the IANA timezone database: the platform runs on the
-# standard library (sqlite3, zoneinfo, dataclasses).
+# Runtime dependencies shared by Nexa.exe and NexaWorker.exe.
 #
 # tzdata is required on Windows, which ships no IANA database. Without it
 # Africa/Cairo silently falls back to a fixed +02:00 offset and every reminder
 # computed during Egyptian summer time would be an hour late.
 tzdata>=2024.1
+
+# Member 3 — structured extraction schemas and deterministic date parsing.
+pydantic>=2.0,<3
+dateparser>=1.2
+
+# Member 4 — professional email rendering and Gmail delivery.
+Jinja2>=3.1
+google-api-python-client>=2.120
+google-auth>=2.28
+google-auth-oauthlib>=1.2
+
+# Member 4 — OAuth tokens live in Windows Credential Manager, never in a
+# config file (Section 38). Optional at import time so rendering and preview
+# can be tested on a machine without a credential store.
+keyring>=24.3

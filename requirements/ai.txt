@@ -1,0 +1,10 @@
+-r base.txt
+
+# Local model runtimes and embeddings. Heavy, downloaded once, no recurring
+# cost and no cloud inference (Section 14). Split out of base.txt so the
+# report/email and data layers can be installed and tested without them.
+numpy>=1.26
+sentence-transformers>=2.6
+chromadb>=0.4
+llama-cpp-python>=0.2
+faster-whisper>=1.0

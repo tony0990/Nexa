@@ -181,6 +181,26 @@ class Database:
                 raise MigrationError(f"migration {version} failed: {exc}") from exc
             newly_applied.append(version)
 
+        if newly_applied and not self.is_memory:
+            # Reopen so the connection re-parses the schema it just changed.
+            #
+            # OWNERSHIP NOTE: added by Member 4 for migration 004, which widens
+            # two CHECK constraints in place (see that file for why it cannot
+            # rebuild the tables). SQLite caches a connection's parsed schema,
+            # and neither `PRAGMA writable_schema = RESET` nor closing the
+            # writable_schema block invalidates it, so without this the
+            # connection that applied the migration keeps enforcing the *old*
+            # constraint until the process restarts. On a first run that means
+            # open_database() succeeds and the very next insert fails.
+            #
+            # Safe for every migration, not just 004: reconnecting a database
+            # that was just migrated inside a committed transaction cannot lose
+            # work, and the next connect() rebuilds the connection with the same
+            # pragmas and functions. Skipped for in-memory databases, where
+            # closing the connection would discard the whole database.
+            self.close()
+            self.connect()
+
         return newly_applied
 
     def applied_migrations(self) -> List[Tuple[str, str]]:

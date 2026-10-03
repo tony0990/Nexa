@@ -1,0 +1,68 @@
+{# Shared personalized-reminder layout (Section 11).
+
+   Deliberately shorter than the meeting report: a reminder is about one task
+   and is often read on a phone notification, so the deadline is the most
+   prominent element and there is no action-item table.
+#}
+{% block doctype %}<!DOCTYPE html>{% endblock %}
+<html lang="{{ language|lower }}" dir="{{ direction }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }}</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f5f7;">
+<div style="display:none;max-height:0;overflow:hidden;">{{ intro }}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f5f7;padding:24px 12px;" dir="{{ direction }}">
+<tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#ffffff;border-radius:8px;border:1px solid #e3e5e9;font-family:{% block font_stack %}'Segoe UI',Arial,Helvetica,sans-serif{% endblock %};color:#1f2328;" dir="{{ direction }}">
+
+<tr><td style="padding:20px 24px;border-bottom:2px solid #1f4e79;">
+<div style="font-size:13px;letter-spacing:2px;color:#1f4e79;font-weight:700;">NEXA</div>
+<div style="font-size:19px;font-weight:700;padding-top:4px;">{{ title }}</div>
+</td></tr>
+
+<tr><td style="padding:20px 24px 0;">
+<p style="margin:0 0 14px;font-size:15px;white-space:pre-line;" dir="auto">{{ greeting }}</p>
+<p style="margin:0 0 18px;font-size:15px;line-height:1.8;white-space:pre-line;" dir="auto">{{ intro }}</p>
+</td></tr>
+
+<tr><td style="padding:0 24px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e3e5e9;border-radius:6px;{{ 'border-right' if direction == 'rtl' else 'border-left' }}:4px solid #1f4e79;" dir="{{ direction }}">
+<tr><td style="padding:14px 16px;">
+<div style="font-size:16px;font-weight:600;line-height:1.6;" dir="auto">{{ task }}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;padding-top:10px;" dir="{{ direction }}">
+<tr>
+<td style="padding:3px 0;color:#5a6270;width:104px;">{{ labels.deadline }}</td>
+<td style="padding:3px 0;font-weight:600;" dir="auto">{{ deadline }}</td>
+</tr>
+{% if meeting_title %}
+<tr>
+<td style="padding:3px 0;color:#5a6270;">{{ labels.meeting }}</td>
+<td style="padding:3px 0;" dir="auto">{{ meeting_title }}</td>
+</tr>
+{% endif %}
+</table>
+{% if evidence %}
+<div style="margin-top:10px;padding:8px 10px;background:#f7f8fa;border-radius:4px;font-size:12px;color:#5a6270;line-height:1.7;" dir="auto">
+<span style="color:#8a9099;">{{ labels.evidence }}:</span> {{ evidence }}
+</div>
+{% endif %}
+</td></tr>
+</table>
+</td></tr>
+
+<tr><td style="padding:18px 24px 20px;">
+<p style="margin:0 0 16px;font-size:14px;line-height:1.8;color:#3c424b;white-space:pre-line;" dir="auto">{{ closing }}</p>
+<div style="font-size:14px;line-height:1.8;white-space:pre-line;">{{ signature }}</div>
+</td></tr>
+
+<tr><td style="padding:12px 24px;border-top:1px solid #e3e5e9;font-size:11px;color:#8a9099;">
+{{ labels.generated_at }}: {{ generated_at }}
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>

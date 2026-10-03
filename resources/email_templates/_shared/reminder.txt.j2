@@ -1,0 +1,23 @@
+{# Plain-text reminder fallback. Rendered with autoescape OFF. #}
+NEXA — {{ title }}
+{{ '=' * 56 }}
+
+{{ greeting }}
+
+{{ intro }}
+
+{{ labels.task }}: {{ task }}
+{{ labels.deadline }}: {{ deadline }}
+{% if meeting_title %}
+{{ labels.meeting }}: {{ meeting_title }}
+{% endif %}
+{% if evidence %}
+{{ labels.evidence }}: {{ evidence }}
+{% endif %}
+
+{{ closing }}
+
+{{ signature }}
+
+{{ '-' * 56 }}
+{{ labels.generated_at }}: {{ generated_at }}

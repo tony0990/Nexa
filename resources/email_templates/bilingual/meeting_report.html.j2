@@ -1,0 +1,12 @@
+{# Paired English/Arabic meeting report (Sections 10.3, 24.1).
+
+   The shared layout needs no structural change: the context already carries
+   every label as `English | Arabic` and every date in both forms, and
+   `direction` is "ltr" because Section 10.3's layout leads with English. The
+   Arabic halves are marked dir="auto" in the shared template so they shape and
+   align correctly inside an LTR document.
+
+   The font stack must cover both scripts, so it is the Arabic-capable one.
+#}
+{% extends "_shared/meeting_report.html.j2" %}
+{% block font_stack %}Tahoma,'Segoe UI',Arial,sans-serif{% endblock %}

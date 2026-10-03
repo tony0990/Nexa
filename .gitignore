@@ -18,3 +18,13 @@ venv/
 *.db
 *.db-wal
 *.db-shm
+
+# Generated at runtime, never committed.
+/chroma_db/
+/.coverage
+
+# Gmail OAuth client secrets and any exported token material (Section 38).
+# Tokens live in Windows Credential Manager; this is only the client file.
+gmail_client_secret.json
+client_secret*.json
+*token.json

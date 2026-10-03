@@ -1,0 +1,117 @@
+{# Shared meeting-report layout.
+
+   Every string here comes from the context, already formatted for one
+   language by `nexa.reports.formatter`, and the text direction is
+   `{{ direction }}`. That makes the layout genuinely language-neutral, so
+   `ar/` and `en/` extend this file instead of each carrying their own copy of
+   the same 100 lines. Each language overrides only `font_stack`, which is the
+   one thing that genuinely differs: Arabic needs Tahoma ahead of the Latin
+   faces to avoid a fallback that renders Arabic badly.
+
+   Constraints driving the markup (Section 24.5):
+   * Inline styles only — Gmail strips <style> blocks.
+   * Nested presentation tables — Outlook ignores most modern CSS layout.
+   * One stacked block per action item rather than a 5-column table, which
+     would force horizontal scrolling on a phone.
+#}
+{% block doctype %}<!DOCTYPE html>{% endblock %}
+<html lang="{{ language|lower }}" dir="{{ direction }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }}</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f5f7;">
+{# Preheader: the grey line a mail client shows next to the subject. Hidden in
+   the body so it is not shown twice. #}
+<div style="display:none;max-height:0;overflow:hidden;">{{ intro }}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f5f7;padding:24px 12px;" dir="{{ direction }}">
+<tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;background:#ffffff;border-radius:8px;border:1px solid #e3e5e9;font-family:{% block font_stack %}'Segoe UI',Arial,Helvetica,sans-serif{% endblock %};color:#1f2328;" dir="{{ direction }}">
+
+<tr><td style="padding:20px 24px;border-bottom:2px solid #1f4e79;">
+<div style="font-size:13px;letter-spacing:2px;color:#1f4e79;font-weight:700;">NEXA</div>
+<div style="font-size:20px;font-weight:700;padding-top:4px;">{{ title }}</div>
+</td></tr>
+
+<tr><td style="padding:20px 24px 4px;">
+<p style="margin:0 0 14px;font-size:15px;white-space:pre-line;" dir="auto">{{ greeting }}</p>
+<p style="margin:0 0 18px;font-size:15px;line-height:1.8;white-space:pre-line;" dir="auto">{{ intro }}</p>
+</td></tr>
+
+<tr><td style="padding:0 24px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;" dir="{{ direction }}">
+<tr>
+<td style="padding:6px 0;color:#5a6270;width:104px;">{{ labels.meeting }}</td>
+<td style="padding:6px 0;font-weight:600;" dir="auto">{{ meeting_title }}</td>
+</tr>
+<tr>
+<td style="padding:6px 0;color:#5a6270;">{{ labels.date }}</td>
+<td style="padding:6px 0;" dir="auto">{{ meeting_date }}</td>
+</tr>
+</table>
+</td></tr>
+
+<tr><td style="padding:22px 24px 8px;">
+<div style="font-size:16px;font-weight:700;color:#1f4e79;">{{ labels.action_items }}</div>
+</td></tr>
+
+{% if rows %}
+<tr><td style="padding:0 24px 8px;">
+{% for row in rows %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px;border:1px solid #e3e5e9;border-radius:6px;{% if row.needs_review %}{{ 'border-right' if direction == 'rtl' else 'border-left' }}:4px solid #c8860d;{% endif %}" dir="{{ direction }}">
+<tr><td style="padding:12px 14px;">
+<div style="font-size:15px;font-weight:600;line-height:1.6;">
+<span style="color:#8a9099;">{{ row.number }}.</span> <span dir="auto">{{ row.task }}</span>
+</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:13px;padding-top:8px;" dir="{{ direction }}">
+<tr>
+<td style="padding:3px 0;color:#5a6270;width:104px;">{{ labels.owner }}</td>
+<td style="padding:3px 0;" dir="auto">{{ row.owner }}</td>
+</tr>
+<tr>
+<td style="padding:3px 0;color:#5a6270;">{{ labels.deadline }}</td>
+<td style="padding:3px 0;font-weight:600;" dir="auto">{{ row.deadline }}</td>
+</tr>
+<tr>
+<td style="padding:3px 0;color:#5a6270;">{{ labels.status }}</td>
+<td style="padding:3px 0;" dir="auto">{{ row.status }}</td>
+</tr>
+</table>
+{% if row.needs_review %}
+<div style="margin-top:8px;padding:6px 10px;background:#fdf6e7;border-radius:4px;font-size:12px;color:#8a6410;">
+{{ labels.needs_review }} — {{ row.review_note }}
+</div>
+{% endif %}
+{% if show_evidence and row.evidence %}
+{# The original spoken sentence, preserved exactly (Section 2.2), shown as a
+   quoted block so colloquial speech reads as evidence and not as report
+   prose. #}
+<div style="margin-top:8px;padding:8px 10px;background:#f7f8fa;border-radius:4px;font-size:12px;color:#5a6270;line-height:1.7;" dir="auto">
+<span style="color:#8a9099;">{{ labels.evidence }}:</span> {{ row.evidence }}
+</div>
+{% endif %}
+</td></tr>
+</table>
+{% endfor %}
+</td></tr>
+{% else %}
+<tr><td style="padding:0 24px 8px;">
+<div style="padding:14px;background:#f7f8fa;border-radius:6px;font-size:14px;color:#5a6270;">{{ labels.no_actions }}</div>
+</td></tr>
+{% endif %}
+
+<tr><td style="padding:12px 24px 20px;">
+<p style="margin:0 0 16px;font-size:14px;line-height:1.8;color:#3c424b;white-space:pre-line;" dir="auto">{{ closing }}</p>
+<div style="font-size:14px;line-height:1.8;white-space:pre-line;">{{ signature }}</div>
+</td></tr>
+
+<tr><td style="padding:12px 24px;border-top:1px solid #e3e5e9;font-size:11px;color:#8a9099;">
+{{ labels.generated_at }}: {{ generated_at }}
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>

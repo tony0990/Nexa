@@ -6,9 +6,15 @@ from pathlib import Path
 
 import pytest
 
-from nexa.core.config import NexaConfig
+from nexa.core.config import NexaConfig, repo_migrations_dir
 from nexa.core.errors import MigrationError
 from nexa.data.database import Database, open_database
+
+# Derived from the directory rather than hard-coded: every member adds
+# migrations, and a literal count here turns each one into a false failure.
+SHIPPED_MIGRATIONS = tuple(
+    sorted(path.stem for path in repo_migrations_dir().glob("*.sql"))
+)
 
 EXPECTED_TABLES = {
     "employees",
@@ -48,11 +54,15 @@ class TestFreshDatabase:
             database.close()
 
     def test_every_migration_is_recorded(self, db):
-        assert [version for version, _ in db.applied_migrations()] == [
+        assert [version for version, _ in db.applied_migrations()] == list(
+            SHIPPED_MIGRATIONS
+        )
+        # The first three are the data platform's own and are ordered.
+        assert SHIPPED_MIGRATIONS[:3] == (
             "001_initial",
             "002_search_indexes",
             "003_audit_indexes",
-        ]
+        )
 
     def test_indexes_exist(self, db):
         indexes = {
@@ -80,17 +90,17 @@ class TestRerunningMigrations:
         second = open_database(config)
         try:
             assert second.migrate() == []
-            assert len(second.applied_migrations()) == 3
+            assert len(second.applied_migrations()) == len(SHIPPED_MIGRATIONS)
         finally:
             second.close()
 
     def test_new_migration_is_applied_to_an_existing_database(self, db, tmp_path: Path):
         directory = tmp_path / "extra-migrations"
         directory.mkdir()
-        (directory / "004_demo.sql").write_text(
+        (directory / "900_demo.sql").write_text(
             "CREATE TABLE demo_only (id INTEGER PRIMARY KEY);", encoding="utf-8"
         )
-        assert db.migrate(directory) == ["004_demo"]
+        assert db.migrate(directory) == ["900_demo"]
         assert db.table_exists("demo_only")
 
 

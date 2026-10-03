@@ -1,9 +1,9 @@
 from datetime import datetime
-from dates.reference_time import CAIRO_TZ
-from app.db.vector_store import VectorStore
-from dedup.embeddings import EmbeddingModel
-from intelligence.llm_runtime import LLMRuntime
-from app.core.indexer import NexaIndexer
+from nexa.dates.reference_time import CAIRO_TZ
+from nexa.dedup.vector_store import VectorStore
+from nexa.dedup.embeddings import EmbeddingModel
+from nexa.intelligence.llm_runtime import LLMRuntime
+from nexa.intelligence.indexer import NexaIndexer
 import sys
 
 # Force UTF-8 output for Windows terminal to handle Arabic text
