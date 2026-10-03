@@ -16,7 +16,7 @@ Full specification, architecture and team ownership: [NEXA.md](NEXA.md).
 | Employees, roles, recipient resolution | `src/nexa/people/` | 1 | Done |
 | Search, filters, global search | `src/nexa/search/` | 1 | Done |
 | Append-only audit trail | `src/nexa/audit/` | 1 | Done |
-| LLM runtime, action extraction, confidence | `src/nexa/intelligence/` | 3 | Done (2 date-rule tests failing — see below) |
+| LLM runtime, action extraction, confidence | `src/nexa/intelligence/` | 3 | Done |
 | Egyptian + English temporal normalization | `src/nexa/dates/` | 3 | Done |
 | Duplicate detection, embeddings, merge advice | `src/nexa/dedup/` | 3 | Done |
 | Report rendering, Arabic/English/bilingual, subjects | `src/nexa/reports/` | 4 | Done |
@@ -24,21 +24,6 @@ Full specification, architecture and team ownership: [NEXA.md](NEXA.md).
 
 Audio/ASR (Member 2), scheduling and `NexaWorker.exe` (Member 5) and the
 desktop UI (Member 6) are not merged yet.
-
-### Known failing tests
-
-Three tests fail on `main`, all in Member 3's owned modules and all predating
-the merge:
-
-* `tests/unit/member3/test_date_rules.py::test_egyptian_relative_days` — an
-  off-by-one day in relative Egyptian phrases
-* `tests/unit/member3/test_date_rules.py::test_egyptian_weekdays` — bare
-  weekday phrases resolve to `None`
-* `tests/unit/member3/test_precision_guardrail.py::test_zero_action_precision`
-  — the mock runtime extracts an action from a zero-action fixture
-
-They are left to Member 3 under ownership rule 7 rather than patched from
-another member's branch.
 
 ## Requirements
 
@@ -194,6 +179,8 @@ writes SQL against another member's tables (Section 19).
 
 * [docs/architecture.md](docs/architecture.md) — how the merged subsystems fit
   together and which parts are still missing
+* [docs/date-rules.md](docs/date-rules.md) — the Egyptian temporal layer's three
+  fixed bugs and the matching rules they imply
 * [docs/data-model.md](docs/data-model.md) — storage conventions and the
   decisions behind the schema
 * [docs/email.md](docs/email.md) — report rendering, Gmail delivery and the

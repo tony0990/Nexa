@@ -75,6 +75,8 @@ Those work packages live beside Member 1's and run in the same command:
 | Path | Covers |
 |---|---|
 | `tests/unit/member3/` | schemas, JSON repair, date rules, confidence, dedup, precision guardrail |
+| `tests/unit/member3/test_date_rule_regressions.py` | substring shadowing, Arabic spelling variants, past dates kept and flagged |
+| `tests/unit/member3/test_mock_runtime.py` | the mock keys on the segment, not the prompt's own few-shot examples |
 | `tests/unit/member4/test_rendering.py` | languages, date/time formatting, owners, HTML/plain-text bodies, escaping |
 | `tests/unit/member4/test_bilingual.py` | paired labels/dates, untranslated names and tasks, LTR layout, subjects |
 | `tests/unit/member4/test_oauth_flow.py` | the real OAuth flow against a faked `InstalledAppFlow` |
@@ -86,8 +88,11 @@ Those work packages live beside Member 1's and run in the same command:
 | `tests/integration/member4/test_bilingual_migration.py` | migration 004 is lossless, self-guarding, and does not rebuild tables |
 
 Member 4's fixtures are `tests/fixtures/member4.py`, pinned to the same
-instant as Member 1's. Three Member 3 date/precision tests currently fail;
-see the README.
+instant as Member 1's. Member 3's date tests pin their reference to Thursday
+24 September 2026, Cairo.
+
+The whole suite passes. If you are looking at an older checkout that reported
+three Member 3 failures, see `docs/date-rules.md` for what they were.
 
 ## Not covered here
 

@@ -57,8 +57,15 @@ class DuplicateService:
             elif not candidate.owner_text and not other.owner_text:
                 owner_score = 0.5
 
-            # Combined weighted score
-            combined_score = (
+            # Combined weighted score.
+            #
+            # float() is not cosmetic: sem_score comes back from numpy, so this
+            # sum is an np.float64 and `>= 0.55` below is an np.bool_. Pydantic
+            # accepts those but warns that a future numpy will refuse to treat
+            # np.bool_ as an index — and the model would otherwise carry numpy
+            # scalars into the data layer and into JSON. Coercing here keeps
+            # plain Python types at the boundary.
+            combined_score = float(
                 (lex_score * 0.30) +
                 (sem_score * 0.35) +
                 (date_score * 0.20) +

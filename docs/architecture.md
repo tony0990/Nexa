@@ -130,9 +130,9 @@ Two places, both annotated in the code and both flagged for their owner:
    migrations, because an in-place schema edit is invisible to the connection
    that made it.
 
-Member 3's packages were also relocated from the repository root into
-`src/nexa/` to match Section 18, with their imports rewritten and no logic
-changed.
+Member 3's packages were relocated from the repository root into `src/nexa/`
+to match Section 18, with their imports rewritten and no logic changed. Three
+bugs in them were later fixed on request; see [date-rules.md](date-rules.md).
 
 ## Testing
 

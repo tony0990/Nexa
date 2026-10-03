@@ -43,14 +43,25 @@ def resolve_temporal_value(phrase: str, ref_dt: datetime) -> ResolvedTemporalVal
     # Run validator
     is_valid, error = validate_resolved_date(resolved_dt, ref_dt)
     if not is_valid:
-        # Even if it resolved, if it's logically invalid (e.g. past),
-        # we mark it unresolved or ambiguous.
+        # The phrase resolved, but the result fails a sanity check — most often
+        # a deadline in the past, from a phrase like `امبارح`.
+        #
+        # Keep the resolved datetime and flag it. Discarding it (returning None)
+        # loses what the reviewer needs: `امبارح` is not ambiguous at all, the
+        # date is known, and only its suitability *as a deadline* is in question.
+        # Nulling it reduces the review screen to "no date" when it could say
+        # "Nexa read this as 23 September, which is in the past". Section 2.1 is
+        # explicit that Nexa shows uncertainty rather than dropping it, and
+        # Section 2.2 forbids losing the evidence trail.
+        #
+        # `resolution_method` stays as whatever resolved it, because it did
+        # resolve; the validation verdict is carried in `ambiguity_reason`.
         return ResolvedTemporalValue(
-            resolved_datetime=None,
+            resolved_datetime=resolved_dt,
             is_ambiguous=True,
             ambiguity_reason=error,
-            resolution_method="unresolved",
-            matched_rule=None
+            resolution_method=method,
+            matched_rule=matched_rule
         )
 
     return ResolvedTemporalValue(
