@@ -28,3 +28,9 @@ venv/
 gmail_client_secret.json
 client_secret*.json
 *token.json
+
+# Member 2 — ASR benchmark output, and recorded team audio, which is personal
+# voice data: share it privately, never commit it.
+/benchmark_out/
+tests/audio/**/*.wav
+tests/audio/RECORD_*.md

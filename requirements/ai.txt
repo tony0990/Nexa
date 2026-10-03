@@ -8,3 +8,6 @@ sentence-transformers>=2.6
 chromadb>=0.4
 llama-cpp-python>=0.2
 faster-whisper>=1.0
+
+# Member 2 — RAM column of the ASR benchmark (optional at import time).
+psutil>=5.9

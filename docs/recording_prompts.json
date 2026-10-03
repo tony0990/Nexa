@@ -1,0 +1,45 @@
+{
+  "_note": "Starter set. Every team member records the SAME prompts (different voices, same text = controlled comparison). Read each sentence naturally, in your own accent, the way you would say it in a meeting. Review the Arabic for naturalness before the team records. Noisy clips reuse the first 5 mixed prompts, recorded in a noisy place.",
+  "arabic": [
+    {"id": "ar01", "text": "أحمد يخلص التقرير قبل يوم الاتنين", "keywords": ["التقرير"], "date_phrases": ["يوم الاتنين"], "english_terms": []},
+    {"id": "ar02", "text": "الاجتماع الجاي يوم الخميس الساعة تلاتة العصر", "keywords": ["الاجتماع"], "date_phrases": ["يوم الخميس", "الساعة تلاتة العصر"], "english_terms": []},
+    {"id": "ar03", "text": "لازم نبعت العرض للعميل بكرة الصبح", "keywords": ["العرض", "للعميل"], "date_phrases": ["بكرة الصبح"], "english_terms": []},
+    {"id": "ar04", "text": "محمد هيسلم الميزانية آخر الشهر", "keywords": ["الميزانية"], "date_phrases": ["آخر الشهر"], "english_terms": []},
+    {"id": "ar05", "text": "موعد التسليم النهائي يوم الأحد الساعة عشرة", "keywords": ["التسليم"], "date_phrases": ["يوم الأحد", "الساعة عشرة"], "english_terms": []},
+    {"id": "ar06", "text": "سارة تراجع العقد بعد بكرة", "keywords": ["العقد"], "date_phrases": ["بعد بكرة"], "english_terms": []},
+    {"id": "ar07", "text": "هنعمل اجتماع المتابعة الأسبوع الجاي يوم الثلاثاء", "keywords": ["اجتماع المتابعة"], "date_phrases": ["الأسبوع الجاي", "يوم الثلاثاء"], "english_terms": []},
+    {"id": "ar08", "text": "لازم الفريق يخلص الاختبارات قبل نهاية اليوم", "keywords": ["الاختبارات"], "date_phrases": ["قبل نهاية اليوم"], "english_terms": []},
+    {"id": "ar09", "text": "علي هيجهز قائمة الموظفين النهاردة", "keywords": ["قائمة الموظفين"], "date_phrases": ["النهاردة"], "english_terms": []},
+    {"id": "ar10", "text": "الخطة تتسلم يوم الاتنين الجاي الساعة تسعة", "keywords": ["الخطة"], "date_phrases": ["يوم الاتنين الجاي", "الساعة تسعة"], "english_terms": []}
+  ],
+  "english": [
+    {"id": "en01", "text": "Ahmed will finish the database integration before Monday.", "keywords": ["database integration"], "date_phrases": ["before Monday"], "english_terms": []},
+    {"id": "en02", "text": "The project review is next Thursday at three PM.", "keywords": ["project review"], "date_phrases": ["next Thursday", "three PM"], "english_terms": []},
+    {"id": "en03", "text": "Please send the final report by end of day tomorrow.", "keywords": ["final report"], "date_phrases": ["end of day tomorrow"], "english_terms": []},
+    {"id": "en04", "text": "Sara needs to review the contract on the twentieth of September.", "keywords": ["contract"], "date_phrases": ["twentieth of September"], "english_terms": []},
+    {"id": "en05", "text": "We have the budget meeting on Sunday at ten in the morning.", "keywords": ["budget meeting"], "date_phrases": ["Sunday at ten"], "english_terms": []},
+    {"id": "en06", "text": "The HR list should be ready by Monday at twelve noon.", "keywords": ["HR list"], "date_phrases": ["Monday at twelve"], "english_terms": []},
+    {"id": "en07", "text": "Let us schedule the follow-up call for next week.", "keywords": ["follow up call"], "date_phrases": ["next week"], "english_terms": []},
+    {"id": "en08", "text": "Mohamed will present the demo to the client on Wednesday.", "keywords": ["demo", "client"], "date_phrases": ["on Wednesday"], "english_terms": []},
+    {"id": "en09", "text": "The deployment must be completed before the end of the month.", "keywords": ["deployment"], "date_phrases": ["end of the month"], "english_terms": []},
+    {"id": "en10", "text": "Remind the team about the presentation tomorrow at nine.", "keywords": ["presentation"], "date_phrases": ["tomorrow at nine"], "english_terms": []}
+  ],
+  "mixed": [
+    {"id": "mx01", "text": "بكرة عندنا meeting الساعة ten.", "keywords": [], "date_phrases": ["بكرة", "الساعة ten"], "english_terms": ["meeting"]},
+    {"id": "mx02", "text": "أحمد يخلص الـbackend before Thursday.", "keywords": ["backend"], "date_phrases": ["before Thursday"], "english_terms": ["backend"]},
+    {"id": "mx03", "text": "The final report يتبعت يوم الاتنين الساعة four.", "keywords": ["final report"], "date_phrases": ["يوم الاتنين", "الساعة four"], "english_terms": ["final report"]},
+    {"id": "mx04", "text": "الـpresentation تكون ready twenty September.", "keywords": ["presentation"], "date_phrases": ["twenty September"], "english_terms": ["presentation", "ready"]},
+    {"id": "mx05", "text": "الـdatabase لازم تخلص قبل يوم الأحد.", "keywords": ["database"], "date_phrases": ["قبل يوم الأحد"], "english_terms": ["database"]},
+    {"id": "mx06", "text": "هنعمل الـproject review يوم الخميس الساعة three.", "keywords": ["project review"], "date_phrases": ["يوم الخميس", "الساعة three"], "english_terms": ["project review"]},
+    {"id": "mx07", "text": "سارة تبعت الـcontract للعميل before end of day.", "keywords": ["contract"], "date_phrases": ["before end of day"], "english_terms": ["contract"]},
+    {"id": "mx08", "text": "الـbudget meeting هيبقى next Sunday الساعة ten.", "keywords": ["budget meeting"], "date_phrases": ["next Sunday", "الساعة ten"], "english_terms": ["budget meeting"]},
+    {"id": "mx09", "text": "محمد يراجع الـAPI documentation بكرة الصبح.", "keywords": ["API documentation"], "date_phrases": ["بكرة الصبح"], "english_terms": ["API documentation"]},
+    {"id": "mx10", "text": "لازم الـHR list تكون جاهزة يوم الاتنين.", "keywords": ["HR list"], "date_phrases": ["يوم الاتنين"], "english_terms": ["HR list"]},
+    {"id": "mx11", "text": "علي هيعمل الـdeployment على الـserver قبل آخر الشهر.", "keywords": ["deployment"], "date_phrases": ["آخر الشهر"], "english_terms": ["deployment", "server"]},
+    {"id": "mx12", "text": "الـfollow up call مع العميل الأسبوع الجاي يوم الثلاثاء الساعة two.", "keywords": ["follow up call"], "date_phrases": ["الأسبوع الجاي", "يوم الثلاثاء", "الساعة two"], "english_terms": ["follow up call"]},
+    {"id": "mx13", "text": "خلينا نبعت الـinvoice قبل يوم الخميس الساعة five.", "keywords": ["invoice"], "date_phrases": ["يوم الخميس", "الساعة five"], "english_terms": ["invoice"]},
+    {"id": "mx14", "text": "ياريت الـtesting يخلص النهاردة وبعدين نعمل الـrelease بكرة.", "keywords": ["testing", "release"], "date_phrases": ["النهاردة", "بكرة"], "english_terms": ["testing", "release"]},
+    {"id": "mx15", "text": "الـdeadline بتاع الـproposal يوم الأحد الساعة eleven.", "keywords": ["deadline", "proposal"], "date_phrases": ["يوم الأحد", "الساعة eleven"], "english_terms": ["deadline", "proposal"]}
+  ],
+  "noisy_from_mixed": ["mx01", "mx02", "mx03", "mx04", "mx05"]
+}

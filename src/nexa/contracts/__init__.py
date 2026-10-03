@@ -5,7 +5,13 @@ agreement; individual members implement these interfaces inside their own
 packages and never import each other's private modules.
 """
 
-from .audio import AudioRecordingService, RecordedAudio
+from .audio import (
+    AudioDevice,
+    AudioDeviceService,
+    AudioRecordingService,
+    RecordedAudio,
+    SourceConfig,
+)
 from .audit import ActorType, AuditEvent, AuditService
 from .email import (
     DeliveryKind,
@@ -46,6 +52,8 @@ __all__ = [
     "ActionItem",
     "ActionStatus",
     "ActorType",
+    "AudioDevice",
+    "AudioDeviceService",
     "AudioRecordingService",
     "AudioSource",
     "AuditEvent",
@@ -75,6 +83,7 @@ __all__ = [
     "ReviewState",
     "Role",
     "SendResult",
+    "SourceConfig",
     "TargetType",
     "Transcript",
     "TranscriptSegment",
