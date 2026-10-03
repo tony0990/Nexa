@@ -15,6 +15,7 @@ from nexa.scheduling.calculator import CAIRO, UTC, from_db  # noqa: E402
 from nexa.scheduling.completion import CompletionService  # noqa: E402
 from nexa.scheduling.service import ReminderService  # noqa: E402
 from nexa.scheduling.snooze import InvalidSnoozeTime, ReminderNotSnoozable  # noqa: E402
+from nexa.scheduling.states import AuditNames  # noqa: E402
 from nexa.worker.claim import ClaimCoordinator  # noqa: E402
 from nexa.worker.health import WorkerState, check_worker_health  # noqa: E402
 from nexa.worker.heartbeat import Heartbeat  # noqa: E402
@@ -43,7 +44,7 @@ def test_schedule_creates_independent_records(env):
     assert len(rs) == 2 and len({r.id for r in rs}) == 2 and len({r.idempotency_key for r in rs}) == 2
     assert len(ReminderService(env.queue).schedule_for_action(a)) == 2       # idempotent
     assert sum(env.queue.count_by_status().values()) == 2
-    assert env.audit.types().count("reminder.create") == 2
+    assert env.audit.types().count(AuditNames.REMINDER_CREATE) == 2
 
 
 def test_100_same_time_reminders_no_mix_no_duplicates(env):
@@ -53,7 +54,10 @@ def test_100_same_time_reminders_no_mix_no_duplicates(env):
     assert {env.row(i)["status"] for i in ids} == {"SENT"}
     # each email went to the right owner for its own task
     for i, m in zip(range(1, 101), sorted(env.sender.sent, key=lambda m: int(m.subject.split()[-1]))):
-        assert m.subject.endswith(f"Task {i}") and m.to == [f"emp{(i % 5) + 1}@x.eg"]
+        assert m.subject.endswith(f"Task {i}")
+        # Canonical RenderedEmail addresses one recipient, because
+        # email_deliveries.recipient_email is a single address column.
+        assert m.to_email == f"emp{(i % 5) + 1}@x.eg"
     assert env.worker().run_once(T0).sent == 0                               # nothing re-sent
 
 
@@ -96,7 +100,7 @@ def test_crash_while_sending_does_not_resend_to_delivered_recipient(env):
                          __import__("nexa.scheduling.states", fromlist=["x"]).ReminderStatus.SENDING, T0, increment_attempt=True)
     w.d.recorder.record(reminder=r, action=w.d.lookup.get_action(1), employee=env.employees[0], email=None,
                         result=__import__("nexa.contracts.email", fromlist=["x"]).SendResult(True, "m1"),
-                        language="ENGLISH", attempted_at=T0, late_recovery=False)   # sent, then crash
+                        language="EN", attempted_at=T0, late_recovery=False)   # sent, then crash
     later = T0 + timedelta(minutes=10); env.now = later
     env.worker(stale_claim_after=timedelta(minutes=5)).run_once(later)
     assert env.sender.sent == [] and env.row(rid)["status"] == "SENT"
@@ -107,7 +111,7 @@ def test_device_offline_30_min_late_recovery(env):
     now = T0 + timedelta(minutes=30); env.now = now
     s = env.worker().run_once(now)
     assert s.sent == 1 and s.late_recovered == 1 and env.row(rid)["status"] == "SENT"
-    assert "reminder.late_recovery" in env.audit.types()
+    assert AuditNames.REMINDER_LATE_RECOVERY in env.audit.types()
 
 
 def test_beyond_recovery_window_not_sent(env):
@@ -128,7 +132,7 @@ def test_completed_task_reminder_never_sent(env):
     c = env.factory(); a = c.execute("SELECT status, completed_at FROM action_items WHERE id=1").fetchone(); c.close()
     assert a["status"] == "COMPLETED" and a["completed_at"]
     assert CompletionService(env.queue).mark_complete(1).already_completed
-    assert "action.mark_complete" in env.audit.types()
+    assert AuditNames.ACTION_COMPLETE in env.audit.types()
 
 
 def test_completed_after_claim_worker_double_checks(env):
@@ -157,7 +161,7 @@ def test_snooze_moves_reminder_not_deadline(env):
     assert len(env.sender.sent) == 1
     c = env.factory(); a = c.execute("SELECT due_date, due_time FROM action_items WHERE id=1").fetchone(); c.close()
     assert (a["due_date"], a["due_time"]) == ("2026-09-07", "15:00")          # deadline untouched
-    assert "reminder.snooze" in env.audit.types()
+    assert AuditNames.REMINDER_SNOOZE in env.audit.types()
 
 
 def test_snooze_validation(env):
@@ -222,7 +226,7 @@ def test_reschedule_invalidates_obsolete_and_recalculates(env):
     assert [r.scheduled_at.astimezone(CAIRO).strftime("%m-%d %H:%M") for r in new] == ["09-09 20:00", "09-10 08:00"]
     c = env.factory(); a = c.execute("SELECT due_date,due_time FROM action_items WHERE id=1").fetchone(); c.close()
     assert (a["due_date"], a["due_time"]) == ("2026-09-10", "14:00")
-    assert "action.reschedule" in env.audit.types()
+    assert AuditNames.ACTION_RESCHEDULE in env.audit.types()
 
 
 def test_graceful_shutdown_releases_unprocessed(env):

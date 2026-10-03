@@ -60,15 +60,17 @@ at all.
 | `src/nexa/dedup/` | 3 | Embeddings, similarity, duplicate detection |
 | `src/nexa/reports/` | 4 | Report rendering in AR / EN / BILINGUAL |
 | `src/nexa/email/` | 4 | Gmail OAuth and sending, MIME, preview, personalization |
+| `src/nexa/scheduling/` | 5 | Reminder rules, SQLite queue, snooze, completion, reschedule, recovery |
+| `src/nexa/worker/` | 5 | Worker loop, claiming, retry, heartbeat, single instance, Windows startup |
+| `apps/nexa_worker.py` | 5 | `NexaWorker.exe` entry point |
 
 ### Not merged yet
 
 | Expected by Section 18 | Owner |
 |---|---|
 | `src/nexa/audio/`, `src/nexa/asr/` | 2 |
-| `src/nexa/scheduling/`, `src/nexa/worker/` | 5 |
 | `src/nexa/ui/`, `src/nexa/i18n/`, `src/nexa/themes/` | 6 |
-| `apps/nexa_desktop.py`, `apps/nexa_worker.py` | 6 (worker packaging with 5) |
+| `apps/nexa_desktop.py` | 6 |
 | `resources/translations/`, `resources/icons/`, `resources/themes/` | 6 |
 | `models/whisper/`, `models/llm/` | 2 / 3 (downloaded, gitignored) |
 | `tests/e2e/`, `tests/audio/` | 6 / 2 |
@@ -121,7 +123,7 @@ Contracts are deliberately small and change rarely. The one change so far is the
 
 ## Where ownership has been crossed
 
-Two places, both annotated in the code and both flagged for their owner:
+All annotated in the code and flagged for their owner:
 
 1. `migrations/004_bilingual_email_language.sql` — Member 4 added a migration to
    Member 1's directory, because the BILINGUAL mode cannot be persisted under
@@ -129,6 +131,14 @@ Two places, both annotated in the code and both flagged for their owner:
 2. `src/nexa/data/database.py` — `migrate()` now reconnects after applying
    migrations, because an in-place schema edit is invisible to the connection
    that made it.
+3. `src/nexa/contracts/email.py` — `SendResult` gained `retryable`, which
+   Member 5's worker needs and Member 4 owns (Section 24.1). Additive.
+4. `src/nexa/audit/event_types.py` — four names added for the worker, which had
+   been using a parallel vocabulary. Additive; see
+   [integration.md](integration.md).
+5. `src/nexa/scheduling/` and `src/nexa/worker/` — Member 5's packages were
+   relocated out of a nested `Nexa/` directory and adapted to the canonical
+   contracts. Their private copy of `contracts/` was deleted.
 
 Member 3's packages were relocated from the repository root into `src/nexa/`
 to match Section 18, with their imports rewritten and no logic changed. Three
@@ -139,3 +149,8 @@ bugs in them were later fixed on request; see [date-rules.md](date-rules.md).
 Every suite runs offline, from one command, with no microphone, model file,
 Gmail account or network. `python -m pytest`; see [testing.md](testing.md) for
 the layout and [email.md](email.md) for the report/Gmail specifics.
+
+Per-member suites use fakes for what they do not own, which is what made
+parallel work possible and is also why they cannot catch a join that is wrong.
+`tests/integration/test_cross_member.py` and `tests/integration/test_worker_app.py`
+exist for that; [integration.md](integration.md) records what they caught.

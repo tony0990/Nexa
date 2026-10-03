@@ -162,9 +162,17 @@ class EmailService:
         try:
             result = self.sender.send(rendered)
         except EmailError as exc:
-            result = SendResult(ok=False, error_message=str(exc))
+            result = SendResult(
+                ok=False, error_message=str(exc), retryable=exc.retryable
+            )
         except Exception as exc:  # a transport that raises something unexpected
-            result = SendResult(ok=False, error_message=f"{type(exc).__name__}: {exc}")
+            # Unknown cause, so retryable — losing a reminder is worse than
+            # attempting it twice (errors.classify_status).
+            result = SendResult(
+                ok=False,
+                error_message=f"{type(exc).__name__}: {exc}",
+                retryable=True,
+            )
         attempt = DeliveryAttempt(rendered=rendered, result=result, **ids)
         if self.delivery_sink is not None:
             self.delivery_sink(attempt)

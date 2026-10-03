@@ -4,14 +4,23 @@ from __future__ import annotations
 import json
 import logging
 import threading
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import date, datetime, time, timedelta, timezone
 from typing import Any, Callable, Optional, Protocol
 
-from nexa.contracts.email import EmailSender, RenderedEmail, SendResult
-from nexa.contracts.meetings import ActionItem, Meeting
-from nexa.contracts.people import DeliveryTarget, Employee, RecipientResolver
+from nexa.contracts.email import (
+    DeliveryKind,
+    DeliveryTarget,
+    EmailSender,
+    RecipientResolver,
+    RenderedEmail,
+    SendResult,
+    TargetType,
+)
+from nexa.contracts.meetings import ActionItem, EmailLanguage, Meeting
+from nexa.contracts.people import Employee
 from nexa.contracts.scheduling import Reminder
+from nexa.reports.models import resolve_language
 from nexa.scheduling.calculator import from_db, to_db
 from nexa.scheduling.queue import ConnectionFactory, SqliteReminderQueue, emit_audit, transaction
 from nexa.scheduling.recovery import MISSED_EXPIRED_ERROR, DueClass, RecoveryPolicy
@@ -86,11 +95,29 @@ class SqliteActionLookup:
                              "AND action_item_id=?", (action.id,)).fetchall()
         finally:
             c.close()
-        targets = [DeliveryTarget("REMINDER", r["target_type"], r["target_id"],
-                                  r["meeting_id"], r["action_item_id"]) for r in rows]
+        # Keyword arguments on purpose: the canonical DeliveryTarget leads with
+        # id/meeting_id, so the positional form this once used silently bound
+        # "REMINDER" to `id` and every reminder resolved to zero recipients.
+        targets = [
+            DeliveryTarget(
+                delivery_kind=DeliveryKind.REMINDER.value,
+                target_type=r["target_type"],
+                target_id=r["target_id"],
+                meeting_id=r["meeting_id"],
+                action_item_id=r["action_item_id"],
+            )
+            for r in rows
+        ]
         if not targets and action.owner_employee_id is not None:      # spec default: assigned employee
-            targets = [DeliveryTarget("REMINDER", "ASSIGNEE", action.owner_employee_id,
-                                      action.meeting_id, action.id)]
+            targets = [
+                DeliveryTarget(
+                    delivery_kind=DeliveryKind.REMINDER.value,
+                    target_type=TargetType.ASSIGNEE.value,
+                    target_id=action.owner_employee_id,
+                    meeting_id=action.meeting_id,
+                    action_item_id=action.id,
+                )
+            ]
         return targets
 
     def get_setting(self, key: str, default: Any = None) -> Any:
@@ -124,16 +151,22 @@ class SqliteDeliveryRecorder:
 
     def record(self, *, reminder, action, employee, email, result, language, attempted_at,
                late_recovery) -> None:
-        ok = bool(result.success)
+        ok = bool(result.ok)
         with transaction(self.factory) as c:
             c.execute(
                 "INSERT INTO email_deliveries(meeting_id, action_item_id, reminder_id, "
                 "recipient_employee_id, recipient_email, subject, language, status, "
                 "gmail_message_id, attempted_at, sent_at, error_message) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                 (action.meeting_id, action.id, reminder.id, employee.id, employee.email,
-                 email.subject if email else None, language, "SENT" if ok else "FAILED",
-                 result.message_id if ok else None, to_db(attempted_at),
-                 to_db(attempted_at) if ok else None, None if ok else (result.error or "send failed")))
+                 # email_deliveries.subject is NOT NULL DEFAULT '': a delivery
+                 # can be recorded with no rendered email (the build failed, or
+                 # there were no recipients), and passing None there crashes the
+                 # insert instead of logging the failure.
+                 (email.subject if email else "") or "",
+                 language, "SENT" if ok else "FAILED",
+                 result.gmail_message_id if ok else None, to_db(attempted_at),
+                 to_db(attempted_at) if ok else None,
+                 None if ok else (result.error_message or "send failed")))
 
 
 # ----------------------------------------------------------------- service
@@ -265,8 +298,15 @@ class WorkerService:
         attempt = reminder.attempt_count + 1
 
         meeting = lookup.get_meeting(action.meeting_id)
-        language = ((meeting.email_language if meeting else None)
-                    or lookup.get_setting("default_email_language", "ENGLISH"))
+        # "ENGLISH" was not a storable value: email_deliveries.language is
+        # CHECK (language IN ('AR','EN','BILINGUAL')), so this fallback made
+        # every delivery insert fail whenever the setting row was missing.
+        # DEFAULT_SETTINGS["default_email_language"] is "AR"; resolve_language
+        # also maps anything stale onto a real mode rather than raising.
+        language = resolve_language(
+            (meeting.email_language if meeting else None)
+            or lookup.get_setting("default_email_language", EmailLanguage.AR.value)
+        )
         employees = self._recipients(lookup.get_reminder_targets(action))
         if not employees:
             q.transition(reminder.id, [S.SENDING], S.FAILED, now, last_error=NO_RECIPIENTS)
@@ -286,23 +326,29 @@ class WorkerService:
             else:
                 try:
                     email = self.d.email_builder.build_reminder(emp, action, meeting, language)
-                    if not email.to:
-                        email.to = [emp.email]
+                    if not email.to_email:
+                        # The canonical RenderedEmail is frozen and addresses
+                        # one recipient; replace rather than mutate.
+                        email = replace(email, to_email=emp.email)
                     result = self.d.email_sender.send(email)
                 except Exception as exc:
-                    result = SendResult(False, error=f"{type(exc).__name__}: {exc}", retryable=True)
+                    result = SendResult(
+                        ok=False,
+                        error_message=f"{type(exc).__name__}: {exc}",
+                        retryable=True,
+                    )
             try:
                 self.d.recorder.record(reminder=reminder, action=action, employee=emp, email=email,
                                        result=result, language=language, attempted_at=now,
                                        late_recovery=late)
             except Exception:
                 log.exception("delivery record failed for reminder %s", reminder.id)
-            if result.success:
+            if result.ok:
                 delivered += 1
             elif result.retryable:
-                retryable_errors.append(f"{emp.id}: {result.error}")
+                retryable_errors.append(f"{emp.id}: {result.error_message}")
             else:
-                permanent_errors.append(f"{emp.id}: {result.error}")
+                permanent_errors.append(f"{emp.id}: {result.error_message}")
 
         if retryable_errors:
             nxt = self.d.retry_policy.next_attempt(attempt, now)

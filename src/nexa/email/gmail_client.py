@@ -84,9 +84,18 @@ class GmailSender:
             )
         except EmailError as exc:
             # Already classified (invalid recipient, missing dependency, auth).
-            return SendResult(ok=False, error_message=str(exc))
+            return SendResult(
+                ok=False, error_message=str(exc), retryable=exc.retryable
+            )
         except Exception as exc:
-            return SendResult(ok=False, error_message=str(from_http_error(exc)))
+            # The taxonomy decides whether the worker should try again; see
+            # errors.classify_status for why an unknown failure is retryable.
+            classified = from_http_error(exc)
+            return SendResult(
+                ok=False,
+                error_message=str(classified),
+                retryable=classified.retryable,
+            )
         return SendResult(ok=True, gmail_message_id=(sent or {}).get("id"))
 
     def is_connected(self) -> bool:
@@ -136,6 +145,9 @@ class FakeEmailSender:
     fail_for: set = field(default_factory=set)
     fail_next: int = 0
     error_message: str = "Fake sender was told to fail"
+    #: Classification the fake reports for its failures, so Member 5's retry
+    #: path and its give-up path can both be exercised without Gmail.
+    retryable: bool = True
     validate: bool = True
     on_send: Optional[Callable[[RenderedEmail], None]] = None
 
@@ -144,11 +156,15 @@ class FakeEmailSender:
             self.on_send(message)
         if self.fail_next > 0:
             self.fail_next -= 1
-            return SendResult(ok=False, error_message=self.error_message)
+            return SendResult(
+                ok=False, error_message=self.error_message, retryable=self.retryable
+            )
         if (message.to_email or "").strip().casefold() in {
             address.casefold() for address in self.fail_for
         }:
-            return SendResult(ok=False, error_message=self.error_message)
+            return SendResult(
+                ok=False, error_message=self.error_message, retryable=self.retryable
+            )
         if self.validate:
             # Build the real MIME message even though nothing is transmitted, so
             # the fake rejects what Gmail would reject (a malformed address, a
@@ -157,7 +173,9 @@ class FakeEmailSender:
             try:
                 build_gmail_payload(message, self.from_email, self.from_name)
             except EmailError as exc:
-                return SendResult(ok=False, error_message=str(exc))
+                return SendResult(
+                    ok=False, error_message=str(exc), retryable=exc.retryable
+                )
         gmail_message_id = f"fake-{len(self.sent) + 1:06d}"
         self.sent.append(SentMessage(message=message, gmail_message_id=gmail_message_id))
         return SendResult(ok=True, gmail_message_id=gmail_message_id)

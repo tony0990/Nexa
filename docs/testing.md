@@ -86,6 +86,10 @@ Those work packages live beside Member 1's and run in the same command:
 | `tests/integration/member4/test_preview_and_send.py` | preview → send, partial failures, the Member 1 delivery seam |
 | `tests/integration/member4/test_connection.py` | Gmail connect/test/disconnect, revoked grants |
 | `tests/integration/member4/test_bilingual_migration.py` | migration 004 is lossless, self-guarding, and does not rebuild tables |
+| `tests/unit/member5/` | reminder rules, queue transitions, retry and recovery policy |
+| `tests/integration/member5/` | the Section 25.5 stress tests: 100 same-second reminders, restart mid-batch, offline recovery, snooze, completion |
+| `tests/integration/test_cross_member.py` | the real seams — Member 4's renderer and Member 1's resolver inside Member 5's worker, with no fakes but the Gmail transport |
+| `tests/integration/test_worker_app.py` | `NexaWorker.exe`'s composition root, which had never been executed |
 
 Member 4's fixtures are `tests/fixtures/member4.py`, pinned to the same
 instant as Member 1's. Member 3's date tests pin their reference to Thursday

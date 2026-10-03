@@ -11,7 +11,7 @@ class FakeEmailSender:
 
     def send(self, rendered_email):
         self.sent.append(rendered_email)
-        return SendResult(success=True, message_id=f"fake-{len(self.sent)}")
+        return SendResult(ok=True, gmail_message_id=f"fake-{len(self.sent)}")
 
 
 class ScriptedEmailSender(FakeEmailSender):
@@ -23,7 +23,7 @@ class ScriptedEmailSender(FakeEmailSender):
     def send(self, rendered_email):
         self.calls += 1
         if self.calls <= self.fail_times:
-            return SendResult(False, error="boom", retryable=not self.permanent)
+            return SendResult(ok=False, error_message="boom", retryable=not self.permanent)
         return super().send(rendered_email)
 
 
@@ -42,9 +42,21 @@ class FakeResolver:
 
 
 class FakeBuilder:
+    """Stands in for Member 4's ReportService.build_reminder.
+
+    Returns the canonical RenderedEmail, which addresses one recipient through
+    `to_email` — `email_deliveries.recipient_email` is a single address, so a
+    list was never storable.
+    """
+
     def build_reminder(self, employee, action, meeting, language):
-        return RenderedEmail(subject=f"[Nexa Reminder] {action.task}", text_body=f"Dear {employee.full_name}",
-                             to=[employee.email] if employee.email else [], language=language)
+        return RenderedEmail(
+            to_email=employee.email or "",
+            to_name=employee.full_name,
+            subject=f"[Nexa Reminder] {action.task}",
+            text_body=f"Dear {employee.full_name}",
+            language=language,
+        )
 
 
 class RecordingAudit:

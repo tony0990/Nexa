@@ -16,6 +16,7 @@ ENTITY_EMAIL_DELIVERY = "email_delivery"
 ENTITY_TEMPLATE = "meeting_template"
 ENTITY_SETTING = "setting"
 ENTITY_TRANSCRIPT = "transcript"
+ENTITY_WORKER = "worker"
 
 # ------------------------------------------------------------------ meeting
 MEETING_CREATED = "meeting.created"
@@ -50,6 +51,11 @@ REMINDER_SNOOZED = "reminder.snoozed"
 REMINDER_SENT = "reminder.sent"
 REMINDER_FAILED = "reminder.failed"
 REMINDER_SKIPPED_COMPLETED = "reminder.skipped_completed"
+# Added for Member 5's worker. A retry is not a failure and a late recovery is
+# not an ordinary send: collapsing either into the names above would make the
+# audit trail unable to distinguish "we are trying again" from "we gave up".
+REMINDER_RETRY_SCHEDULED = "reminder.retry_scheduled"
+REMINDER_LATE_RECOVERED = "reminder.late_recovered"
 
 # -------------------------------------------------------------------- email
 EMAIL_QUEUED = "email.queued"
@@ -78,6 +84,10 @@ TEMPLATE_DELETED = "template.deleted"
 
 # ----------------------------------------------------------------- settings
 SETTING_CHANGED = "setting.changed"
+
+# ------------------------------------------------------------------- worker
+WORKER_STARTED = "worker.started"
+WORKER_STOPPED = "worker.stopped"
 
 # ------------------------------------------------------------------- system
 DATABASE_BACKED_UP = "system.database_backed_up"

@@ -11,13 +11,14 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Iterable, Optional, Sequence
 
-from nexa.contracts.audit import AuditEvent
+from nexa.contracts.audit import ActorType, AuditEvent
 from nexa.contracts.meetings import ActionItem
 from nexa.contracts.scheduling import Reminder
 
 from .calculator import PlannedReminder, calculate_reminders, from_db, to_db
 from .rules import ReminderPolicy
 from .states import (
+    AuditNames,
     ReminderStatus as S,
     ReminderType,
     assert_transition,
@@ -63,7 +64,7 @@ def transaction(factory: ConnectionFactory, conn: Optional[sqlite3.Connection] =
 
 
 def emit_audit(audit: Any, event_type: str, entity_type: str, entity_id: Optional[int],
-               *, actor_type: str = "system", actor_id: Optional[str] = None,
+               *, actor_type: str = ActorType.SYSTEM.value, actor_id: Optional[str] = None,
                old: Optional[dict] = None, new: Optional[dict] = None,
                metadata: Optional[dict] = None) -> None:
     """Record via the AuditService contract; audit failures never break scheduling."""
@@ -116,10 +117,10 @@ class SqliteReminderQueue:
         self.audit_created(created)
         return all_rows
 
-    def audit_created(self, reminders: Sequence[Reminder], *, actor_type: str = "system",
+    def audit_created(self, reminders: Sequence[Reminder], *, actor_type: str = ActorType.SYSTEM.value,
                       actor_id: Optional[str] = None) -> None:
         for r in reminders:
-            emit_audit(self.audit, "reminder.create", "reminder", r.id,
+            emit_audit(self.audit, AuditNames.REMINDER_CREATE, "reminder", r.id,
                        actor_type=actor_type, actor_id=actor_id,
                        new={"action_item_id": r.action_item_id,
                             "scheduled_at": to_db(r.scheduled_at), "status": S(r.status).value})

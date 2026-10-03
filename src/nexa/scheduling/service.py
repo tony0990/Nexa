@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Optional
 
+from nexa.contracts.audit import ActorType
 from nexa.contracts.meetings import ActionItem
 from nexa.contracts.scheduling import Reminder
 
@@ -32,14 +33,14 @@ class ReminderService:
             self.queue.replace_rules(c, action.id, policy, now)
             created: list[Reminder] = []
             reminders = self.queue.insert_planned(c, action.id, planned, now, created_out=created)
-        self.queue.audit_created(created, actor_type="user")
+        self.queue.audit_created(created, actor_type=ActorType.USER.value)
         return reminders
 
     def cancel_for_action(self, action_id: int, actor: Optional[str] = "admin") -> list[int]:
         ids = self.queue.cancel_for_action(action_id)
         for rid in ids:
             emit_audit(self.audit, AuditNames.REMINDER_CANCEL, "reminder", rid,
-                       actor_type="user", actor_id=actor,
+                       actor_type=ActorType.USER.value, actor_id=actor,
                        metadata={"action_item_id": action_id})
         return ids
 

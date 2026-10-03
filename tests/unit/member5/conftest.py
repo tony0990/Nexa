@@ -1,6 +1,7 @@
 import os
 import sys
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import pytest
 
@@ -14,17 +15,27 @@ from nexa.scheduling.queue import SqliteReminderQueue, connect  # noqa: E402
 from nexa.worker.service import (SqliteActionLookup, SqliteDeliveryRecorder,  # noqa: E402
                                  WorkerDependencies, WorkerService)
 
-# Mirrors spec section 16 (Member 1 owns the real migrations).
-SCHEMA = """
-CREATE TABLE employees(id INTEGER PRIMARY KEY, full_name TEXT, email TEXT, department TEXT, job_title TEXT, active INTEGER DEFAULT 1, created_at TEXT, updated_at TEXT);
-CREATE TABLE meetings(id INTEGER PRIMARY KEY, title TEXT, template_id INTEGER, started_at TEXT, ended_at TEXT, audio_source TEXT, status TEXT, email_language TEXT, created_at TEXT, updated_at TEXT);
-CREATE TABLE action_items(id INTEGER PRIMARY KEY, meeting_id INTEGER, task TEXT, owner_employee_id INTEGER, owner_raw_text TEXT, raw_date_phrase TEXT, due_date TEXT, due_time TEXT, due_at TEXT, source_text TEXT, confidence REAL, review_state TEXT, status TEXT DEFAULT 'PENDING', completed_at TEXT, created_at TEXT, updated_at TEXT);
-CREATE TABLE reminder_rules(id INTEGER PRIMARY KEY, action_item_id INTEGER, rule_type TEXT, offset_minutes INTEGER, fixed_local_time TEXT, enabled INTEGER, created_at TEXT);
-CREATE TABLE reminders(id INTEGER PRIMARY KEY, action_item_id INTEGER, scheduled_at TEXT, status TEXT, attempt_count INTEGER DEFAULT 0, next_attempt_at TEXT, claimed_at TEXT, sent_at TEXT, last_error TEXT, idempotency_key TEXT, created_at TEXT, updated_at TEXT);
-CREATE TABLE delivery_targets(id INTEGER PRIMARY KEY, meeting_id INTEGER, action_item_id INTEGER, delivery_kind TEXT, target_type TEXT, target_id INTEGER, created_at TEXT);
-CREATE TABLE email_deliveries(id INTEGER PRIMARY KEY, meeting_id INTEGER, action_item_id INTEGER, reminder_id INTEGER, recipient_employee_id INTEGER, recipient_email TEXT, subject TEXT, language TEXT, status TEXT, gmail_message_id TEXT, attempted_at TEXT, sent_at TEXT, error_message TEXT);
-CREATE TABLE settings(key TEXT PRIMARY KEY, value_json TEXT, updated_at TEXT);
-"""
+# The real schema, from Member 1's migrations.
+#
+# This file used to hand-write its own CREATE TABLE statements "mirroring spec
+# section 16". That is the trap this whole merge exists to catch: the hand-copy
+# had no CHECK constraints and no foreign keys, so Member 5's SQL was being
+# tested against a schema nobody ships. Running against the migrations is what
+# makes these integration tests mean anything — it is how the lowercase
+# `actor_type` and the `email_language="ENGLISH"` bugs below were found.
+
+
+def apply_real_schema(db_path: str) -> None:
+    """Migrate a fresh database using Member 1's `open_database`."""
+    from nexa.core.config import NexaConfig
+    from nexa.data.database import open_database
+
+    path = Path(db_path)
+    database = open_database(
+        NexaConfig(data_dir=path.parent, database_filename=path.name)
+    )
+    database.close()
+
 
 T0 = datetime(2026, 9, 6, 17, 0, tzinfo=timezone.utc)   # 20:00 Cairo (UTC+3 in September)
 
@@ -32,19 +43,41 @@ T0 = datetime(2026, 9, 6, 17, 0, tzinfo=timezone.utc)   # 20:00 Cairo (UTC+3 in 
 class Env:
     def __init__(self, path):
         self.path = str(path)
+        apply_real_schema(self.path)
         self.factory = lambda: connect(self.path)
-        c = self.factory(); c.executescript(SCHEMA); c.close()
         self.now = T0
         self.audit = RecordingAudit()
         self.queue = SqliteReminderQueue(self.factory, clock=lambda: self.now, audit=self.audit)
         self.sender = FakeEmailSender()
-        self.employees = [Employee(i, f"Emp {i}", f"emp{i}@x.eg") for i in range(1, 6)]
+        self.employees = [
+            Employee(id=i, full_name=f"Emp {i}", email=f"emp{i}@x.eg") for i in range(1, 6)
+        ]
+        # The real schema enforces foreign keys, so the employees the resolver
+        # hands back must actually exist: action_items.owner_employee_id
+        # references employees(id). The hand-written schema had no FKs, so this
+        # was never needed and the tests were correspondingly weaker.
+        c = self.factory()
+        try:
+            for e in self.employees:
+                c.execute(
+                    "INSERT OR IGNORE INTO employees(id,full_name,full_name_norm,email,"
+                    "active,created_at,updated_at) VALUES (?,?,?,?,1,?,?)",
+                    (e.id, e.full_name, e.full_name.lower(), e.email,
+                     to_db(self.now), to_db(self.now)))
+        finally:
+            c.close()
 
     def add_action(self, id=1, owner=1, status="PENDING", meeting_id=1, due_date="2026-09-07", due_time="15:00"):
         c = self.factory()
-        c.execute("INSERT OR IGNORE INTO meetings(id,title,email_language) VALUES (?,?,?)", (meeting_id, "M", "ENGLISH"))
-        c.execute("INSERT INTO action_items(id,meeting_id,task,owner_employee_id,due_date,due_time,status) VALUES (?,?,?,?,?,?,?)",
-                  (id, meeting_id, f"Task {id}", owner, due_date, due_time, status))
+        c.execute(
+            "INSERT OR IGNORE INTO meetings(id,title,email_language,created_at,updated_at) "
+            "VALUES (?,?,?,?,?)",
+            (meeting_id, "M", "EN", to_db(self.now), to_db(self.now)))
+        c.execute(
+            "INSERT INTO action_items(id,meeting_id,task,owner_employee_id,due_date,"
+            "due_time,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)",
+            (id, meeting_id, f"Task {id}", owner, due_date, due_time, status,
+             to_db(self.now), to_db(self.now)))
         c.close()
 
     def add_reminder(self, action_id, scheduled_at, status="PENDING", key=None):

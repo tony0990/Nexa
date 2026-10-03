@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from enum import Enum
+
+from nexa.audit import event_types
 from typing import Optional
 
 
@@ -87,15 +89,28 @@ def reminder_type_from_key(key: str) -> Optional[ReminderType]:
 
 
 class AuditNames:
-    REMINDER_CREATE = "reminder.create"
-    REMINDER_CANCEL = "reminder.cancel"
-    REMINDER_SEND = "reminder.send"
-    REMINDER_FAIL = "reminder.fail"
-    REMINDER_RETRY = "reminder.retry"
-    REMINDER_SKIP_COMPLETED = "reminder.skipped_completed"
-    REMINDER_SNOOZE = "reminder.snooze"
-    REMINDER_LATE_RECOVERY = "reminder.late_recovery"
-    ACTION_COMPLETE = "action.mark_complete"
-    ACTION_RESCHEDULE = "action.reschedule"
-    WORKER_START = "worker.start"
-    WORKER_STOP = "worker.stop"
+    """Audit event names, re-exported from Member 1's canonical vocabulary.
+
+    These strings are written into `audit_events.event_type` forever and the
+    audit-trail screen filters on them, so there can only be one spelling.
+    This class originally defined its own — "reminder.create" against Member 1's
+    "reminder.created", and so on — which would have split the history for every
+    reminder event in two and left half of it invisible to the UI.
+
+    Aliases, not copies: adding a name in `nexa.audit.event_types` is enough,
+    and a renamed constant fails here at import rather than silently writing an
+    unknown event.
+    """
+
+    REMINDER_CREATE = event_types.REMINDER_CREATED
+    REMINDER_CANCEL = event_types.REMINDER_CANCELLED
+    REMINDER_SEND = event_types.REMINDER_SENT
+    REMINDER_FAIL = event_types.REMINDER_FAILED
+    REMINDER_RETRY = event_types.REMINDER_RETRY_SCHEDULED
+    REMINDER_SKIP_COMPLETED = event_types.REMINDER_SKIPPED_COMPLETED
+    REMINDER_SNOOZE = event_types.REMINDER_SNOOZED
+    REMINDER_LATE_RECOVERY = event_types.REMINDER_LATE_RECOVERED
+    ACTION_COMPLETE = event_types.ACTION_COMPLETED
+    ACTION_RESCHEDULE = event_types.ACTION_RESCHEDULED
+    WORKER_START = event_types.WORKER_STARTED
+    WORKER_STOP = event_types.WORKER_STOPPED

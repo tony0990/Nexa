@@ -75,9 +75,19 @@ class RenderedEmail:
 
 @dataclass(frozen=True)
 class SendResult:
+    """The outcome of one send attempt.
+
+    `retryable` is the retry contract between Member 4 and Member 5: Section
+    24.1 makes "retryable vs permanent errors" Member 4's job, and this is the
+    only channel to the worker's retry policy. It defaults to True because a
+    retried reminder is recoverable and a dropped one is not — see
+    `nexa.email.errors.classify_status`. It is meaningless when `ok` is True.
+    """
+
     ok: bool = False
     gmail_message_id: Optional[str] = None
     error_message: Optional[str] = None
+    retryable: bool = True
 
 
 class RecipientResolver(Protocol):

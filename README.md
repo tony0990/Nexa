@@ -3,7 +3,7 @@
 Smart Meeting Voice AI & Reminder desktop application for Windows.
 Full specification, architecture and team ownership: [NEXA.md](NEXA.md).
 
-`main` holds the merged work of **Members 1, 3 and 4**, plus the shared
+`main` holds the merged work of **Members 1, 3, 4 and 5**, plus the shared
 `contracts` package from the Section 17 kickoff.
 
 ## What is implemented here
@@ -21,9 +21,11 @@ Full specification, architecture and team ownership: [NEXA.md](NEXA.md).
 | Duplicate detection, embeddings, merge advice | `src/nexa/dedup/` | 3 | Done |
 | Report rendering, Arabic/English/bilingual, subjects | `src/nexa/reports/` | 4 | Done |
 | Gmail OAuth, sending, preview, personalization | `src/nexa/email/` | 4 | Done |
+| Reminder rules, queue, snooze, completion, recovery | `src/nexa/scheduling/` | 5 | Done |
+| `NexaWorker.exe` loop, claiming, retry, health | `src/nexa/worker/` | 5 | Done |
+| Worker entry point | `apps/nexa_worker.py` | 5 | Done |
 
-Audio/ASR (Member 2), scheduling and `NexaWorker.exe` (Member 5) and the
-desktop UI (Member 6) are not merged yet.
+Audio/ASR (Member 2) and the desktop UI (Member 6) are not merged yet.
 
 ## Requirements
 
@@ -58,6 +60,11 @@ python scripts/preview_emails.py        # writes sample emails to build/
 
 ```bash
 python scripts/setup_gmail.py status    # offline; says what Gmail setup is missing
+```
+
+```bash
+python apps/nexa_worker.py --db ./demo-data/nexa.db --once     # one worker pass
+python apps/nexa_worker.py --status                            # health JSON
 ```
 
 ```python
@@ -163,6 +170,9 @@ writes SQL against another member's tables (Section 19).
 * **Email is offline-testable.** `FakeEmailSender` satisfies the same
   `EmailSender` protocol as `GmailSender` and still builds real MIME, so it
   rejects what Gmail would reject. Members 5 and 6 need no Google account.
+* **`SendResult.retryable` is the Member 4 → Member 5 retry contract.** The
+  worker branches on it to decide retry versus give up; Member 4 sets it from
+  the error taxonomy in `nexa.email.errors`.
 * **Member 4 never writes to the database.** Sending returns
   `DeliveryAttempt`/`SendSummary` objects; Member 1's `DeliveryRepository`
   persists them (Section 24.1).
@@ -181,6 +191,8 @@ writes SQL against another member's tables (Section 19).
   together and which parts are still missing
 * [docs/date-rules.md](docs/date-rules.md) — the Egyptian temporal layer's three
   fixed bugs and the matching rules they imply
+* [docs/integration.md](docs/integration.md) — what broke when the work packages
+  were actually joined, and the contract rules that follow from it
 * [docs/data-model.md](docs/data-model.md) — storage conventions and the
   decisions behind the schema
 * [docs/email.md](docs/email.md) — report rendering, Gmail delivery and the
