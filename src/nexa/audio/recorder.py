@@ -56,6 +56,9 @@ class _SourceWorker(threading.Thread):
         self._paused_total = 0.0
         self._written = 0  # samples written at TARGET_SAMPLE_RATE
         self.error: BaseException | None = None
+        # Added so the UI can draw a live level (the eye's pupil). Written by the
+        # capture thread, read by the UI thread; a float assignment is atomic.
+        self.level_db: float = -90.0
 
     def pause(self) -> None:
         with self._lock:
@@ -95,6 +98,7 @@ class _SourceWorker(threading.Thread):
                     continue  # drop audio while paused
                 if block is not None:
                     samples = resample(block, self._capture.sample_rate, TARGET_SAMPLE_RATE)
+                    self.level_db = level_db(samples)
                     self._writer.write(samples)
                     self._written += len(samples)
                 else:
@@ -131,6 +135,21 @@ class Recorder:
     @property
     def is_recording(self) -> bool:
         return bool(self._workers)
+
+    @property
+    def level_db(self) -> float:
+        """Loudest current input level across active sources, in dBFS (-90 = silent)."""
+        levels = [w.level_db for w in self._workers.values()]
+        return max(levels) if levels else -90.0
+
+    @property
+    def workdir(self) -> Path | None:
+        """Where the current recording's chunk folders live (None when idle).
+
+        Read-only, added so a live-transcription poller can find closed chunks
+        without reaching into private state.
+        """
+        return self._workdir
 
     def start(self, config: SourceConfig | str) -> str:
         if isinstance(config, str):  # the kickoff contract passes "MICROPHONE" / "COMPUTER" / "BOTH"

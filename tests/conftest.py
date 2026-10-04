@@ -14,12 +14,16 @@ every single run.
 from __future__ import annotations
 
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator
 
 import pytest
+
+# Qt must never try to open a real window under test.
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 SRC = Path(__file__).resolve().parents[1] / "src"
 if str(SRC) not in sys.path:  # pragma: no cover - import plumbing
@@ -118,3 +122,16 @@ def iter_category_fixtures(category: str) -> Iterator[dict[str, Any]]:
 @pytest.fixture
 def all_transcript_fixtures() -> dict[str, list[dict[str, Any]]]:
     return {category: _load_json_fixtures(category) for category in FIXTURE_CATEGORIES}
+
+
+# --------------------------------------------------------------- Member 6
+@pytest.fixture(scope="session")
+def qapp():
+    """One QApplication for the whole session (Qt allows exactly one).
+
+    Imported lazily so the data, email and worker suites do not need PySide6
+    installed just to be collected.
+    """
+    from PySide6.QtWidgets import QApplication
+
+    return QApplication.instance() or QApplication([])

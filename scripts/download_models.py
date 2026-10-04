@@ -87,7 +87,7 @@ def _list() -> int:
     print("ASR models (faster-whisper):")
     for spec in available_models():
         target = WHISPER_DIR / spec.key
-        mark = "present" if target.is_dir() and any(target.iterdir()) else "-"
+        mark = "present" if (target / "model.bin").is_file() else "-"
         print(f"  {spec.key:<20} {mark:<8} {spec.description}")
     print("\nLLM models (llama.cpp GGUF):")
     for key, spec in LLM_CANDIDATES.items():
@@ -101,21 +101,22 @@ def _list() -> int:
 
 # ------------------------------------------------------------------------- ASR
 def _download_asr(key: str, *, force: bool = False) -> bool:
-    """Fetch a CTranslate2 Whisper model by letting faster-whisper cache it.
+    """Fetch a CTranslate2 Whisper model into a plain folder under models/whisper/.
 
-    faster-whisper downloads and converts on first construction, so
-    instantiating the model *is* the download. That avoids reimplementing its
-    cache layout, and means the file ends up exactly where the engine will look
-    for it.
+    A flat folder (model.bin, config.json, tokenizer.json, vocabulary) rather
+    than the Hugging Face cache layout, because the engine and the packaged
+    exe both load it *by path*: `WhisperModel("models/whisper/whisper-medium")`.
+    The HF cache is a tree of symlinked blobs that does not survive being copied
+    into a PyInstaller bundle or onto another machine.
     """
     spec = resolve_model(key)
     target = WHISPER_DIR / spec.key
-    if target.is_dir() and any(target.iterdir()) and not force:
+    if (target / "model.bin").is_file() and not force:
         print(f"[skip] ASR {spec.key} already present at {target}")
         return True
 
     try:
-        from faster_whisper import WhisperModel
+        from faster_whisper.utils import download_model
     except ImportError:
         print(
             f"[fail] ASR {spec.key}: faster-whisper is not installed.\n"
@@ -124,16 +125,14 @@ def _download_asr(key: str, *, force: bool = False) -> bool:
         return False
 
     print(f"[get ] ASR {spec.key} ({spec.model_id}) -> {target}")
-    print("       first run downloads and converts; this can take a while")
     target.mkdir(parents=True, exist_ok=True)
     try:
-        # download_root puts the cache under models/whisper/<key> instead of the
-        # user's global HF cache, so a build can ship it and an uninstall is one
-        # directory.
-        WhisperModel(spec.model_id, device="cpu", compute_type="int8",
-                     download_root=str(target))
+        download_model(spec.model_id, output_dir=str(target))
     except Exception as exc:
         print(f"[fail] ASR {spec.key}: {exc}")
+        return False
+    if not (target / "model.bin").is_file():
+        print(f"[fail] ASR {spec.key}: download finished but model.bin is missing")
         return False
     print(f"[ok  ] ASR {spec.key}")
     return True

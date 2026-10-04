@@ -34,7 +34,9 @@ def default_templates_dir() -> Path:
     bundle unpacks resources beside the executable rather than beside the
     package.
     """
-    return Path(__file__).resolve().parents[3] / "resources" / "email_templates"
+    from ..core.paths import resource_dir
+
+    return resource_dir() / "resources" / "email_templates"
 
 
 class TemplateNotFoundError(Exception):

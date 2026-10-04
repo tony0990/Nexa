@@ -196,6 +196,19 @@ class DeliveryRepository(BaseRepository):
         )
         return [row_to_email_delivery(row) for row in rows]
 
+    def recent(self, limit: int = 100) -> List[EmailDelivery]:
+        """Newest deliveries first, for the email history screen.
+
+        OWNERSHIP NOTE: added by the integration for Member 6's history screen,
+        which needs every delivery and not only one meeting's or one employee's.
+        Purely additive, read-only.
+        """
+        rows = self.db.query_all(
+            f"SELECT {_DELIVERY_COLUMNS} FROM email_deliveries ORDER BY id DESC LIMIT ?",
+            (limit,),
+        )
+        return [row_to_email_delivery(row) for row in rows]
+
     def failed(self, limit: int = 100) -> List[EmailDelivery]:
         rows = self.db.query_all(
             f"SELECT {_DELIVERY_COLUMNS} FROM email_deliveries WHERE status = 'FAILED' "

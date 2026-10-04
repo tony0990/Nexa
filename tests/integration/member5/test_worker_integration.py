@@ -7,7 +7,7 @@ from unittest import mock
 import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "unit", "member5"))
-from conftest import Env, T0  # noqa: E402
+from m5_env import Env, T0  # noqa: E402
 from fakes import ScriptedEmailSender  # noqa: E402
 
 from nexa.contracts.meetings import ActionItem  # noqa: E402

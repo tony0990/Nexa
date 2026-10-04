@@ -90,12 +90,17 @@ def test_a_fresh_database_is_created_and_migrated(tmp_path):
     assert "no such table" not in (result.stdout + result.stderr)
 
 
-def test_missing_gmail_is_a_clear_message_not_a_traceback(tmp_path):
-    """A worker that cannot send should say so the way Settings does."""
+def test_missing_gmail_falls_back_to_the_outbox_and_says_so(tmp_path):
+    """No Gmail is the normal state before the Section 24.4 admin setup.
+
+    The worker must still start, must not trace back, and must say plainly that
+    reminders are going to a folder rather than being delivered.
+    """
     result = run_worker("--db", str(tmp_path / "data" / "nexa.db"), "--once")
     combined = result.stdout + result.stderr
     assert "Traceback" not in combined, combined
-    assert "Gmail is not connected" in combined
+    assert result.returncode == 0, combined
+    assert "outbox" in combined.lower()
     assert "setup_gmail.py connect" in combined
 
 
@@ -132,7 +137,7 @@ def test_build_dependencies_wires_every_members_real_service(
     from nexa.reports.service import ReportService
     from nexa.worker.runner import WorkerConfig
 
-    monkeypatch.setattr(worker_app, "_email_sender", lambda: FakeEmailSender())
+    monkeypatch.setattr(worker_app, "_email_sender", lambda outbox_dir=None: FakeEmailSender())
 
     config = WorkerConfig(db_path=str(tmp_path / "data" / "nexa.db"))
     deps = worker_app.build_dependencies(config)
@@ -155,7 +160,7 @@ def test_the_wired_worker_can_run_a_pass(tmp_path, worker_app, monkeypatch):
     from nexa.worker.runner import WorkerConfig
     from nexa.worker.service import WorkerService
 
-    monkeypatch.setattr(worker_app, "_email_sender", lambda: FakeEmailSender())
+    monkeypatch.setattr(worker_app, "_email_sender", lambda outbox_dir=None: FakeEmailSender())
     config = WorkerConfig(db_path=str(tmp_path / "data" / "nexa.db"))
     worker = WorkerService(worker_app.build_dependencies(config))
 
@@ -176,6 +181,6 @@ def test_email_service_is_not_used_as_the_sender(worker_app):
     from nexa.email import EmailService
 
     source = inspect.getsource(worker_app.build_dependencies)
-    assert "email_sender=_email_sender()" in source
+    assert "_email_sender(" in source
     # The orchestrator returns an attempt, confirming it is the wrong shape.
     assert "DeliveryAttempt" in inspect.getsource(EmailService.send)

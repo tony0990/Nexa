@@ -29,6 +29,7 @@ from .errors import (
     from_http_error,
 )
 from .gmail_client import FakeEmailSender, GmailSender, SentMessage, build_sender
+from .outbox import OutboxSender
 from .mime_builder import build_gmail_payload, build_mime_message, to_gmail_raw
 from .oauth import GMAIL_SEND_SCOPE, SCOPES, GmailOAuthFlow, OAuthClient
 from .personalization import RecipientBundle, actions_for, bundle_by_recipient, owners_of
@@ -68,6 +69,7 @@ __all__ = [
     "MemoryTokenStore",
     "NullTokenStore",
     "OAuthClient",
+    "OutboxSender",
     "PermanentEmailError",
     "PreviewRecipient",
     "RecipientBundle",

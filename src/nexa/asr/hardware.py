@@ -24,6 +24,14 @@ def detect_hardware(prefer_int8: bool = False, force_cpu: bool = False) -> Hardw
     """GPU -> float16 (or int8_float16 to save VRAM, e.g. Whisper Medium on a 6 GB card);
     CPU -> int8."""
     gpus = 0 if force_cpu else cuda_device_count()
+    # A device being present is not the same as its libraries being loadable.
+    # Without this check a machine with an NVIDIA driver but no CUDA-12 runtime
+    # picked the GPU and then failed every transcription (see cuda_runtime.py).
+    if gpus > 0:
+        from .cuda_runtime import cuda_libs_available
+
+        if not cuda_libs_available():
+            gpus = 0
     if gpus > 0:
         return HardwareProfile("cuda", "int8_float16" if prefer_int8 else "float16", gpus)
     return HardwareProfile("cpu", "int8", 0)
