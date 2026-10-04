@@ -47,7 +47,7 @@ QFrame#Card {
 }
 QLabel#PageTitle { font-size: 24px; font-weight: 700; }
 QLabel#Muted { color: #5b6b86; }
-QLineEdit, QComboBox, QTextEdit, QDateTimeEdit, QSpinBox {
+QLineEdit, QComboBox, QTextEdit, QPlainTextEdit, QDateTimeEdit, QSpinBox {
   background: white;
   border: 1px solid #c9d4ea;
   border-radius: 8px;
@@ -70,3 +70,4 @@ QTextBrowser#EmailPreview {
   color: #111111;
   border: 1px solid #d0d7e6;
 }
+QPushButton:disabled, QPushButton#Ghost:disabled { background: #dfe4ee; color: #98a2b8; }

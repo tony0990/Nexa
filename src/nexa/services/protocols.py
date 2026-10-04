@@ -4,7 +4,7 @@ Real implementations belong to other members. The UI only depends on these
 contracts (or fakes that match them).
 """
 
-from nexa.contracts.models import (
+from nexa.services.models import (
     ActionCandidate,
     ActionItem,
     AuditEvent,

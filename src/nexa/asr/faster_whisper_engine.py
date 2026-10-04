@@ -18,6 +18,32 @@ from .model_registry import ModelSpec, resolve_model
 from .transcript import build_transcript
 
 
+#: Whisper's own confidence signals. A segment that the model itself thinks is
+#: probably not speech, AND that it was unsure about, is overwhelmingly a
+#: hallucination: on silence or room noise Whisper will happily invent fluent text
+#: (in a *different language* if auto-detection is on). These are the thresholds
+#: from OpenAI's reference implementation.
+NO_SPEECH_THRESHOLD = 0.6
+LOGPROB_THRESHOLD = -1.0
+#: Highly repetitive output ("thank you thank you thank you...") is the other
+#: classic failure.
+COMPRESSION_RATIO_THRESHOLD = 2.4
+
+
+def _looks_hallucinated(segment) -> bool:
+    """True for a segment Whisper likely made up from silence or noise.
+
+    Uses `getattr` with safe defaults so an engine or a test double that does not
+    provide the confidence fields is never filtered by accident.
+    """
+    no_speech = getattr(segment, "no_speech_prob", 0.0) or 0.0
+    avg_logprob = getattr(segment, "avg_logprob", 0.0) or 0.0
+    compression = getattr(segment, "compression_ratio", 0.0) or 0.0
+    if no_speech > NO_SPEECH_THRESHOLD and avg_logprob < LOGPROB_THRESHOLD:
+        return True
+    return compression > COMPRESSION_RATIO_THRESHOLD
+
+
 class FasterWhisperEngine:
     def __init__(
         self,
@@ -56,6 +82,21 @@ class FasterWhisperEngine:
         self._model = None
 
     def transcribe(self, audio_path: str) -> Transcript:
+        try:
+            return self._transcribe(audio_path)
+        except Exception as exc:  # noqa: BLE001
+            from .cuda_runtime import looks_like_cuda_failure
+
+            # The GPU path can fail lazily — at the first inference, not at model
+            # load — so a recording that is already finished would be lost. Drop
+            # to CPU once and retry rather than surface a DLL error to the user.
+            if self.hardware.device != "cuda" or not looks_like_cuda_failure(exc):
+                raise
+            self.hardware = detect_hardware(force_cpu=True)
+            self._model = None
+            return self._transcribe(audio_path)
+
+    def _transcribe(self, audio_path: str) -> Transcript:
         self.load()
         assert self._model is not None
         segments, info = self._model.transcribe(
@@ -67,5 +108,5 @@ class FasterWhisperEngine:
             condition_on_previous_text=False,  # avoids repetition loops on long audio
         )
         # `segments` is a lazy generator: iterating it is what actually runs the model.
-        raw = [(s.start, s.end, s.text) for s in segments]
+        raw = [(s.start, s.end, s.text) for s in segments if not _looks_hallucinated(s)]
         return build_transcript(raw, model_name=self.name, duration_ms=int(info.duration * 1000))

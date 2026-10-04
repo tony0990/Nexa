@@ -29,11 +29,12 @@ from nexa.ui.state import AppState
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, skip_first_run: bool = False) -> None:
+    def __init__(self, skip_first_run: bool = False, services=None) -> None:
         super().__init__()
         self.state = AppState()
         self.trans = TranslationService(self.state.language)
-        self.services = FakeServiceContainer()
+        # The real container in the shipped app, the fakes for --demo and the tests.
+        self.services = services if services is not None else FakeServiceContainer()
         self.setMinimumSize(1200, 740)
         self.theme = ThemeManager(self, self.state.theme)
         self._build()
@@ -69,7 +70,8 @@ class MainWindow(QMainWindow):
                 lambda: self.navigate("review"),
                 lambda: self.navigate("email_history"),
             ),
-            "meeting": MeetingPage(self.t, self.services.audio, self.services.transcription, self.services.extraction, self.after_meeting),
+            "meeting": MeetingPage(self.t, self.services.audio, self.services.transcription, self.services.extraction, self.after_meeting,
+                                     pipeline=getattr(self.services, "pipeline", None)),
             "review": ReviewPage(self.t, self.services.people, self.after_review),
             "schedule": SchedulePage(self.t, self.services.reminders, self.state.morning_reminder),
             "people": PeoplePage(self.t, self.services.people),
@@ -127,7 +129,7 @@ class MainWindow(QMainWindow):
         self.navigate("review")
 
     def after_review(self, title, items, participants=None) -> None:
-        self.services.reminders.import_approved(title, items)
+        self.services.reminders.import_approved(title, items, participants=participants)
         self.pages["schedule"].reload()
         self.pages["dashboard"].retranslate()
         self.pages["email_preview"].set_approved(title, items, participants)
@@ -153,7 +155,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(self.t("app.title"))
         self.global_search.setPlaceholderText(self.t("common.search"))
         for key, button in self.buttons:
-            button.setText(self.t(f"nav.{key}"))
+            button.setText(self.t(f"nav.{key}").replace("&", "&&"))
         for page in self.pages.values():
             page.retranslate()
 

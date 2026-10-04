@@ -84,34 +84,41 @@ def build_dependencies(config: WorkerConfig) -> WorkerDependencies:
         lookup=lookup,
         recipient_resolver=RecipientResolver(database, clock),
         email_builder=ReportService(clock=clock),
-        email_sender=_email_sender(),
+        email_sender=_email_sender(db_path.parent / "outbox"),
         audit=audit,
         recorder=SqliteDeliveryRecorder(factory),
         recovery_policy=RecoveryPolicy.from_settings(settings),
     )
 
 
-def _email_sender():
-    """The Gmail sender, or a clear exit if the account is not connected.
+def _email_sender(outbox_dir=None):
+    """Gmail when connected, otherwise the local outbox folder.
 
-    A worker that cannot send is not a worker. Failing here with the same
-    message the Settings screen shows beats starting up and then marking every
-    reminder FAILED with an auth error.
+    This used to exit with "Gmail is not connected", which made NexaWorker.exe
+    unusable for anyone without a Google OAuth client — the normal state before
+    the admin setup in Section 24.4 is done. Reminders are then written as real
+    `.eml` files to the outbox instead of being lost, and the worker says so on
+    stderr so nobody mistakes that for delivery. Connecting Gmail switches it over
+    with no other change: both senders satisfy the same `EmailSender` protocol.
     """
-    from nexa.email import GmailConnectionService
+    from nexa.email import GmailConnectionService, OutboxSender
     from nexa.email.errors import EmailError
 
     connection = GmailConnectionService()
     status = connection.status()
-    if not status.connected:
-        raise SystemExit(
-            f"Gmail is not connected ({status.summary}). "
-            "Run: python scripts/setup_gmail.py connect"
+    if status.connected:
+        try:
+            return connection.sender()
+        except EmailError as exc:
+            print(f"Gmail sender unavailable ({exc}); using the outbox folder.", file=sys.stderr)
+    else:
+        print(
+            f"Gmail is not connected ({status.summary}); reminders will be written to the "
+            "outbox folder instead of being sent. To send for real: python scripts/setup_gmail.py connect",
+            file=sys.stderr,
         )
-    try:
-        return connection.sender()
-    except EmailError as exc:
-        raise SystemExit(f"Gmail sender unavailable: {exc}")
+    folder = Path(outbox_dir) if outbox_dir else Path(os.environ.get("NEXA_DATA_DIR", ".")) / "outbox"
+    return OutboxSender(folder)
 
 
 def main(argv=None, deps_builder=build_dependencies) -> int:

@@ -1,15 +1,36 @@
-.venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
-.mypy_cache/
-dist/
-build/
-*.spec
+.venv/
+venv/
 *.egg-info/
-.idea/
-.vscode/
-data/
-logs/
-*.log
-.DS_Store
+
+# Leading slashes matter: unanchored "data/" would also ignore the
+# src/nexa/data package, and "models/" any nested models package.
+/build/
+/dist/
+/data/
+/demo-data/
+/backups/
+/logs/
+/models/
+
+*.db
+*.db-wal
+*.db-shm
+
+# Generated at runtime, never committed.
+/chroma_db/
+/.coverage
+
+# Gmail OAuth client secrets and any exported token material (Section 38).
+# Tokens live in Windows Credential Manager; this is only the client file.
+gmail_client_secret.json
+client_secret*.json
+*token.json
+
+# Member 2 — ASR benchmark output, and recorded team audio, which is personal
+# voice data: share it privately, never commit it.
+/benchmark_out/
+tests/audio/**/*.wav
+tests/audio/RECORD_*.md

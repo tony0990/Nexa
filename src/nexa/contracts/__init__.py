@@ -1,51 +1,91 @@
-from nexa.contracts.models import (
-    ActionCandidate,
-    ActionItem,
-    AuditEvent,
-    EmailPreview,
-    Employee,
-    Meeting,
-    RecordedAudio,
-    Reminder,
-    RenderedEmail,
-    Role,
-    SendResult,
-    Transcript,
-)
-from nexa.contracts.services import (
+"""Frozen cross-team contracts.
+
+Section 17: this package is a kickoff artifact. Changing it requires team
+agreement; individual members implement these interfaces inside their own
+packages and never import each other's private modules.
+"""
+
+from .audio import (
+    AudioDevice,
+    AudioDeviceService,
     AudioRecordingService,
-    AuditService,
-    EmailPreviewService,
-    EmailSender,
-    ExtractionService,
-    PeopleService,
-    ReminderService,
-    ReportService,
-    SearchService,
-    TranscriptionService,
+    RecordedAudio,
+    SourceConfig,
 )
+from .audit import ActorType, AuditEvent, AuditService
+from .email import (
+    DeliveryKind,
+    DeliveryStatus,
+    DeliveryTarget,
+    EmailDelivery,
+    EmailSender,
+    RecipientResolver,
+    RenderedEmail,
+    SendResult,
+    TargetType,
+)
+from .extraction import ActionCandidate, ExtractionService
+from .meetings import (
+    ActionItem,
+    ActionStatus,
+    AudioSource,
+    EmailLanguage,
+    Meeting,
+    MeetingRepository,
+    MeetingStatus,
+    MeetingTemplate,
+    ReviewState,
+    TranscriptSegment,
+)
+from .people import Employee, EmployeeRepository, PeopleService, Role
+from .scheduling import (
+    Reminder,
+    ReminderQueue,
+    ReminderRule,
+    ReminderRuleType,
+    ReminderStatus,
+)
+from .transcription import Transcript, TranscriptionService
 
 __all__ = [
     "ActionCandidate",
     "ActionItem",
+    "ActionStatus",
+    "ActorType",
+    "AudioDevice",
+    "AudioDeviceService",
+    "AudioRecordingService",
+    "AudioSource",
     "AuditEvent",
-    "EmailPreview",
+    "AuditService",
+    "DeliveryKind",
+    "DeliveryStatus",
+    "DeliveryTarget",
+    "EmailDelivery",
+    "EmailLanguage",
+    "EmailSender",
     "Employee",
+    "EmployeeRepository",
+    "ExtractionService",
     "Meeting",
+    "MeetingRepository",
+    "MeetingStatus",
+    "MeetingTemplate",
+    "PeopleService",
+    "RecipientResolver",
     "RecordedAudio",
     "Reminder",
+    "ReminderQueue",
+    "ReminderRule",
+    "ReminderRuleType",
+    "ReminderStatus",
     "RenderedEmail",
+    "ReviewState",
     "Role",
     "SendResult",
+    "SourceConfig",
+    "TargetType",
     "Transcript",
-    "AudioRecordingService",
-    "AuditService",
-    "EmailPreviewService",
-    "EmailSender",
-    "ExtractionService",
-    "PeopleService",
-    "ReminderService",
-    "ReportService",
-    "SearchService",
+    "TranscriptSegment",
     "TranscriptionService",
 ]

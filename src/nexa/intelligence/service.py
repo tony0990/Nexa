@@ -42,10 +42,12 @@ from typing import List, Optional, Sequence
 from ..contracts.extraction import ActionCandidate as ContractCandidate
 from ..contracts.meetings import TranscriptSegment
 from ..contracts.transcription import Transcript
+from ..dates.clock_time import parse_clock_time
 from ..dates.normalizer import normalize_date_phrase
 from .confidence import finalize_candidate
 from .extractor import Extractor
 from .llm_runtime import LLMRuntime
+from .rule_runtime import RuleBasedRuntime
 from .schemas import ActionCandidate, ExtractionResult
 
 log = logging.getLogger("nexa.intelligence.service")
@@ -83,7 +85,10 @@ class ExtractionService:
         detect_duplicates: bool = True,
     ):
         if extractor is None:
-            runtime = runtime or LLMRuntime(model_path="mock")
+            # The default is the rule-based runtime, not the canned mock. The
+            # mock returns a fixed action item whenever it sees "أحمد" — fine as
+            # a test double, wrong as the thing a real meeting is run through.
+            runtime = runtime or RuleBasedRuntime()
             if not runtime.is_ready():
                 runtime.start()
             extractor = Extractor(runtime)
@@ -187,12 +192,18 @@ class ExtractionService:
         that the original wording survives to the review screen.
         """
         resolved = candidate.resolved_date
+        # The time comes from what was *said* ("الساعة 10 الصبح"), parsed by
+        # `dates.clock_time`. It used to be `resolved.time()`, but the date layer
+        # resolves to midnight, so every action with a date silently received a
+        # 00:00 due time — and Member 5 would then schedule its reminders
+        # against midnight.
+        spoken_time, _ = parse_clock_time(candidate.raw_time_phrase)
         return ContractCandidate(
             task=candidate.task or "",
             owner_text=candidate.owner_text,
             raw_date_phrase=candidate.raw_date_phrase,
             resolved_date=resolved.date() if resolved is not None else None,
-            resolved_time=resolved.time() if resolved is not None else None,
+            resolved_time=spoken_time,
             source_text=candidate.evidence_text
             or (segment.raw_text if segment is not None else ""),
             confidence=float(candidate.confidence or 0.0),

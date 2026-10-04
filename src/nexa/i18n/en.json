@@ -191,5 +191,21 @@
   "audit.filter_hint": "Filter events, e.g. action:17 or Ahmed",
   "email.reminder_recipients": "Reminder recipients",
   "email.same_as_report": "Same as report recipients",
-  "email.no_recipients": "Select at least one recipient before sending."
+  "email.no_recipients": "Select at least one recipient before sending.",
+  "meeting.eye_hint_idle": "Click the eye to start listening",
+  "meeting.eye_hint_recording": "Listening… click the eye to stop",
+  "meeting.eye_hint_paused": "Paused — press Resume to continue",
+  "meeting.eye_hint_processing": "Transcribing and extracting actions…",
+  "meeting.live_transcript": "Transcript",
+  "meeting.transcript_placeholder": "The transcript appears here while you speak.",
+  "meeting.listening_placeholder": "Listening… the first words appear in a few seconds.",
+  "meeting.copy_transcript": "Copy",
+  "meeting.save_transcript": "Save as text…",
+  "meeting.processing_chunk": "Transcribing part {done} of {total}…",
+  "meeting.error_start": "Could not start recording: {error}",
+  "meeting.error_process": "Processing failed: {error}",
+  "meeting.audio_warning": "Audio warning: {warning}",
+  "meeting.details": "Meeting details",
+  "meeting.saved": "Saved",
+  "meeting.no_audio": "Nothing was recorded."
 }

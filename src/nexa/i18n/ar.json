@@ -191,5 +191,21 @@
   "audit.filter_hint": "تصفية الأحداث، مثال: action:17 أو أحمد",
   "email.reminder_recipients": "مستلمو التذكير",
   "email.same_as_report": "نفس مستلمي التقرير",
-  "email.no_recipients": "اختر مستلمًا واحدًا على الأقل قبل الإرسال."
+  "email.no_recipients": "اختر مستلمًا واحدًا على الأقل قبل الإرسال.",
+  "meeting.eye_hint_idle": "اضغط على العين لبدء الاستماع",
+  "meeting.eye_hint_recording": "جارٍ الاستماع… اضغط على العين للإيقاف",
+  "meeting.eye_hint_paused": "متوقف مؤقتًا — اضغط استئناف للمتابعة",
+  "meeting.eye_hint_processing": "جارٍ تفريغ النص واستخراج المهام…",
+  "meeting.live_transcript": "النص المفرَّغ",
+  "meeting.transcript_placeholder": "يظهر النص هنا أثناء الحديث.",
+  "meeting.listening_placeholder": "جارٍ الاستماع… تظهر الكلمات الأولى بعد ثوانٍ.",
+  "meeting.copy_transcript": "نسخ",
+  "meeting.save_transcript": "حفظ كنص…",
+  "meeting.processing_chunk": "جارٍ تفريغ الجزء {done} من {total}…",
+  "meeting.error_start": "تعذر بدء التسجيل: {error}",
+  "meeting.error_process": "فشلت المعالجة: {error}",
+  "meeting.audio_warning": "تنبيه صوتي: {warning}",
+  "meeting.details": "تفاصيل الاجتماع",
+  "meeting.saved": "تم الحفظ",
+  "meeting.no_audio": "لم يتم تسجيل أي صوت."
 }

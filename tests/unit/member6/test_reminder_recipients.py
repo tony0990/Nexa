@@ -1,4 +1,4 @@
-from nexa.contracts.models import ActionCandidate
+from nexa.services.models import ActionCandidate
 from nexa.services.fakes import FakeEmailService, FakePeopleService
 from nexa.ui.email_preview.viewmodel import EmailPreviewViewModel
 

@@ -1,4 +1,4 @@
-from nexa.contracts.models import ActionCandidate, Transcript
+from nexa.services.models import ActionCandidate, Transcript
 from nexa.services.fakes import FakeServiceContainer
 from nexa.ui.email_preview.viewmodel import EmailPreviewViewModel
 from nexa.ui.meeting.viewmodel import MeetingViewModel
@@ -94,6 +94,7 @@ def test_search_filters_by_category_and_task_status():
 
 
 def test_email_preview_three_languages_and_deduped_recipients():
+    services = FakeServiceContainer()
     vm = EmailPreviewViewModel(services.email, services.people)
     vm.actions = services.extraction.extract(services.transcription.transcribe("x"))
     vm.participants = ["Ahmed Hassan", "Maria Adel"]

@@ -1,16 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "nexa"
 version = "0.1.0"
-description = "Nexa Member 6 — Windows desktop UI/UX shell"
-requires-python = ">=3.11"
-dependencies = [
-  "PySide6>=6.7,<7",
-]
+description = "Smart meeting voice AI and reminder desktop application"
+requires-python = ">=3.10"
+dynamic = ["dependencies"]
 
-[project.optional-dependencies]
-dev = ["pytest>=8,<9"]
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements/base.txt"] }
 
-[tool.pytest.ini_options]
-pythonpath = ["src"]
-testpaths = ["tests"]
-addopts = "-q"
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+nexa = ["py.typed"]

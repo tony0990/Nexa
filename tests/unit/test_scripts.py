@@ -68,13 +68,14 @@ def test_download_models_rejects_an_unknown_llm():
     assert "unknown LLM" in result.stdout
 
 
-def test_download_models_reports_a_missing_dependency_clearly():
-    """Not installed is a message with a fix, not an ImportError traceback."""
-    result = run("download_models.py", "--asr", "whisper-small")
-    combined = result.stdout + result.stderr
-    assert "Traceback" not in combined
-    if "[fail]" in combined:
-        assert "requirements/ai.txt" in combined
+def test_download_models_never_runs_a_download_in_tests():
+    """A test must not fetch model weights.
+
+    This once ran `--asr whisper-small`; with faster-whisper installed that is a real
+    download. Only the cheap, offline paths are exercised here.
+    """
+    result = run("download_models.py", "--list")
+    assert result.returncode == 0
 
 
 def test_preview_emails_writes_every_language(tmp_path):

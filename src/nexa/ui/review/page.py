@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from nexa.contracts.models import ActionCandidate
+from nexa.services.models import ActionCandidate
 from nexa.ui.review.action_card import ActionCard
 from nexa.ui.review.duplicate_dialog import DuplicateDialog
 from nexa.ui.review.viewmodel import ReviewViewModel

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 
-from nexa.contracts.models import (
+from nexa.services.models import (
     ActionCandidate,
     ActionItem,
     AuditEvent,
@@ -349,7 +349,7 @@ class FakeReminderService:
     def send_test_reminder(self, action_id: int) -> SendResult:
         return SendResult(True, f"fake-reminder-{action_id}")
 
-    def import_approved(self, meeting_title: str, items, meeting_id: int = 1) -> None:
+    def import_approved(self, meeting_title: str, items, meeting_id: int = 1, participants=None) -> None:
         next_id = max((a.id for a in self._actions), default=0)
         next_reminder = max((r.id for r in self._reminders), default=1000)
         for item in items:

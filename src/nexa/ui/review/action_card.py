@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QComboBox, QHBoxLayout, QLabel, QLineEdit
 
-from nexa.contracts.models import ActionCandidate
+from nexa.services.models import ActionCandidate
 from nexa.ui.widgets.badges import StatusBadge
 from nexa.ui.widgets.cards import Card
 from nexa.ui.widgets.common import ghost_button, muted

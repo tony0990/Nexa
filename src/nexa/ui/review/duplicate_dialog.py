@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLabel, QVBoxLayout
 
-from nexa.contracts.models import ActionCandidate
+from nexa.services.models import ActionCandidate
 from nexa.ui.widgets.common import muted
 
 

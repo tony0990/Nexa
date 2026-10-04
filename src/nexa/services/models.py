@@ -55,6 +55,15 @@ class ActionCandidate:
     review_state: str = "PENDING"
     possible_duplicate_of: Optional[int] = None
     status: str = "PENDING"
+    # Added for the real pipeline, defaulted so the fakes and every existing
+    # test are unaffected. `due_display` is what the admin reads and may edit as
+    # free text; these carry the machine-resolved value so approval does not have
+    # to guess it back out of a display string.
+    due_iso: str = ""          # "YYYY-MM-DD", or "" when no date was resolved
+    due_time: str = ""         # "HH:MM", or "" when no clock time was said
+    needs_review: bool = False
+    review_reason: str = ""
+    original_due_display: str = ""  # lets approval tell whether the admin edited it
 
 
 @dataclass

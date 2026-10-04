@@ -33,16 +33,12 @@ DEFAULT_SETTINGS: Dict[str, Any] = {
 def default_data_dir() -> Path:
     """Where the database lives when nothing else is configured.
 
-    `NEXA_DATA_DIR` wins, then `%LOCALAPPDATA%\\Nexa` on Windows, then
-    `~/.nexa`. Packaged builds set `NEXA_DATA_DIR` explicitly.
+    Delegates to `nexa.core.paths.data_dir`, the single place that decides: portable
+    `<install>/data` first, the per-user app-data folder only if that is not writable.
     """
-    env = os.environ.get("NEXA_DATA_DIR")
-    if env:
-        return Path(env)
-    local_app_data = os.environ.get("LOCALAPPDATA")
-    if local_app_data:
-        return Path(local_app_data) / APP_NAME
-    return Path.home() / ".nexa"
+    from .paths import data_dir
+
+    return data_dir()
 
 
 @dataclass
@@ -92,5 +88,6 @@ class NexaConfig:
 
 def repo_migrations_dir() -> Path:
     """Locate the `migrations/` folder shipped next to the source tree."""
-    # src/nexa/core/config.py -> src/nexa -> src -> repo root
-    return Path(__file__).resolve().parents[3] / "migrations"
+    from .paths import resource_dir
+
+    return resource_dir() / "migrations"

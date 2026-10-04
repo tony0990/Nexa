@@ -1,4 +1,4 @@
-from nexa.contracts.models import ActionCandidate
+from nexa.services.models import ActionCandidate
 
 
 class ReviewViewModel:
