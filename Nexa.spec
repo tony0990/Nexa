@@ -23,6 +23,25 @@ import os
 import site
 from pathlib import Path
 
+# Python 3.10.0's `dis` raises IndexError on some constant-table layouts that newer
+# third-party wheels contain, which kills PyInstaller's bytecode scan mid-build. This
+# was fixed in later 3.10.x releases. Rather than require a different system Python,
+# make the lookup tolerant: the value is only used to label an instruction, and
+# PyInstaller reads import names from opcodes, not from this label.
+import dis as _dis
+
+_orig_const_info = _dis._get_const_info
+
+
+def _tolerant_const_info(const_index, const_list):
+    try:
+        return _orig_const_info(const_index, const_list)
+    except IndexError:
+        return const_index, repr(const_index)
+
+
+_dis._get_const_info = _tolerant_const_info
+
 from PyInstaller.utils.hooks import collect_all, collect_data_files, collect_submodules
 
 ROOT = Path(SPECPATH)

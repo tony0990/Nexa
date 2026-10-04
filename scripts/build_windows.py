@@ -54,6 +54,11 @@ def copy_models() -> list:
 
 
 def verify() -> bool:
+    # A default Windows console is cp1252 and cannot print Arabic check details.
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            reconfigure(encoding="utf-8", errors="replace")
     exe = PACKAGE / "Nexa.exe"
     if not exe.is_file():
         print(f"cannot verify: {exe} does not exist")
